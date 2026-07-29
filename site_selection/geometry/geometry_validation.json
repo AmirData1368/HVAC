@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "layers": [
+    {
+      "name": "nsw_biomass_merged_sa2_regions",
+      "feature_count": 108,
+      "unique_region_names": 108,
+      "minimum_object_id": 1,
+      "maximum_object_id": 108,
+      "source": "https://spatial.industry.nsw.gov.au/arcgis/rest/services/Bioenergy_Assessment/BiomassTool_Cropping/MapServer/0",
+      "geometry_format": "GeoJSON EPSG:4326 simplified to 0.0005 degrees"
+    },
+    {
+      "name": "nsw_forestry_management_areas",
+      "feature_count": 54,
+      "unique_region_names": 54,
+      "minimum_object_id": 1,
+      "maximum_object_id": 54,
+      "source": "https://spatial.industry.nsw.gov.au/arcgis/rest/services/Bioenergy_Assessment/BiomassTool_Forestry/MapServer/0",
+      "geometry_format": "GeoJSON EPSG:4326 simplified to 0.0005 degrees"
+    }
+  ],
+  "scientific_use": "Merged SA2 geometry supports area-weighted 25/50/100 km biomass catchments. The area-weighting assumes uniform distribution inside each published source region and must be sensitivity-tested."
+}
