@@ -51,12 +51,18 @@ def validate(frame: pd.DataFrame, shortlist: pd.DataFrame, k: int) -> dict:
     add("all_clusters_represented", shortlist.cluster.nunique() == k, f"{shortlist.cluster.nunique()}/{k}")
     add("shortlist_size", 5 <= len(shortlist) <= 7, f"{len(shortlist)} selected")
     add("no_duplicate_sites", shortlist.site_name.is_unique, "unique site names")
+    coverage_column = "biomass_geometry_coverage_of_nsw_land_50km"
     add(
-        "biomass_geometry_coverage",
-        bool((frame.biomass_geometry_coverage_50km >= 0.90).all()),
-        f"minimum={frame.biomass_geometry_coverage_50km.min():.3f}",
+        "biomass_geometry_coverage_of_nsw_land",
+        bool((frame[coverage_column] >= 0.90).all()),
+        f"minimum={frame[coverage_column].min():.3f}",
     )
-    return {"status": "PASS" if all(x["passed"] for x in checks) else "FAIL", "checks": checks}
+    add(
+        "candidate_sites_inside_nsw_land",
+        bool((frame.nsw_land_fraction_of_buffer_25km > 0).all()),
+        f"minimum_25km_land_fraction={frame.nsw_land_fraction_of_buffer_25km.min():.3f}",
+    )
+    return {"status": "PASS" if all(check["passed"] for check in checks) else "FAIL", "checks": checks}
 
 
 def main() -> None:
@@ -114,9 +120,11 @@ def main() -> None:
         "selected_sites": shortlist[
             ["site_name", "SA2_NAME21", "cluster", "selection_reason"]
         ].to_dict("records"),
+        "validation": validation,
         "biomass_method": (
             "Area-weighted allocation of official source-region totals to 25/50/100 km buffers; "
-            "uniform within-region density is an explicit proxy assumption."
+            "uniform within-region density is an explicit proxy assumption; coverage is evaluated "
+            "against NSW land inside each buffer rather than ocean or interstate area."
         ),
         "clustering_features": CLUSTER_FEATURES,
         "cluster_algorithms": ["KMeans", "GaussianMixture", "AgglomerativeWard"],
