@@ -1,0 +1,45 @@
+name: Summarise validated site clusters
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/summarise_site_clusters.py'
+      - 'site_selection/results/site_feature_matrix.csv'
+      - 'site_selection/results/recommended_site_shortlist.csv'
+      - '.github/workflows/summarise-site-clusters.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  summarise:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install pandas numpy
+      - name: Create cluster profiles and compact selected-site table
+        run: python scripts/summarise_site_clusters.py
+      - name: Upload cluster summary package
+        uses: actions/upload-artifact@v4
+        with:
+          name: regional-nsw-site-cluster-summary-v1
+          path: |
+            site_selection/results/cluster_profiles.csv
+            site_selection/results/selected_site_summary.csv
+            site_selection/results/cluster_profile_audit.json
+          retention-days: 90
+      - name: Commit validated summaries
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git pull --rebase
+          git add site_selection/results/cluster_profiles.csv site_selection/results/selected_site_summary.csv site_selection/results/cluster_profile_audit.json
+          git commit -m "Store data-derived site cluster profiles" || exit 0
+          git push
