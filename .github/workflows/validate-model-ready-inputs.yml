@@ -7,6 +7,7 @@ on:
     paths:
       - 'model_ready_inputs/**'
       - 'scripts/validate_model_ready_inputs.py'
+      - 'scripts/validate_fuel_logistics.py'
       - '.github/workflows/validate-model-ready-inputs.yml'
 
 permissions:
@@ -22,7 +23,9 @@ jobs:
         with:
           python-version: '3.11'
       - name: Validate schemas, bounds and scientific governance rules
-        run: python scripts/validate_model_ready_inputs.py
+        run: |
+          python scripts/validate_model_ready_inputs.py
+          python scripts/validate_fuel_logistics.py
       - name: Upload validated model-ready input package
         if: success()
         uses: actions/upload-artifact@v4
@@ -30,14 +33,14 @@ jobs:
           name: regional-nsw-model-ready-scientific-inputs-v1
           path: |
             model_ready_inputs
-            model_ready_validation/model_ready_input_validation.json
+            model_ready_validation
           retention-days: 90
       - name: Upload validation diagnostics
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: regional-nsw-model-ready-input-validation
-          path: model_ready_validation/model_ready_input_validation.json
+          path: model_ready_validation
           if-no-files-found: warn
           retention-days: 90
       - name: Record latest successful validation run
