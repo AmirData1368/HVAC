@@ -1,7 +1,7 @@
 {
-  "run_id": 30488304619,
+  "run_id": 30490025853,
   "run_attempt": 1,
-  "commit_sha": "b0eb14629d77b0aa70031e6b0cbbef744dc54f03",
+  "commit_sha": "96796ea3885a9db01fdfb56c6b1a6bb401830de3",
   "package_artifact": "regional-nsw-model-ready-scientific-inputs-v1",
   "diagnostic_artifact": "regional-nsw-model-ready-input-validation"
 }
