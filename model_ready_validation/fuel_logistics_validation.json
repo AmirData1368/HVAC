@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "file": "model_ready_inputs/fuel_and_logistics_parameters.csv",
+  "rows": 7,
+  "errors": [],
+  "warnings": [],
+  "scientific_note": "Diesel observations and logistics assumptions are uncertainty anchors, not a fitted stationary distribution."
+}

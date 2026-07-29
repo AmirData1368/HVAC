@@ -1,0 +1,45 @@
+{
+  "status": "PASS",
+  "root": "/home/runner/work/HVAC/HVAC/model_ready_inputs",
+  "statistics": {
+    "technology_costs.csv": {
+      "rows": 12,
+      "columns": 16
+    },
+    "battery_parameters.csv": {
+      "rows": 11,
+      "columns": 12
+    },
+    "financial_parameters.csv": {
+      "rows": 6,
+      "columns": 12
+    },
+    "biomass_conversion_parameters.csv": {
+      "rows": 15,
+      "columns": 14
+    },
+    "resilience_scenarios.csv": {
+      "rows": 14,
+      "columns": 13
+    },
+    "source_register.csv": {
+      "rows": 16,
+      "columns": 8
+    },
+    "technology_lifecycle_emissions.csv": {
+      "rows": 7,
+      "columns": 20
+    },
+    "load_transfer_protocol.yaml": {
+      "bytes": 2812
+    },
+    "validation_protocol.yaml": {
+      "bytes": 2188
+    },
+    "emissions_accounting_protocol.yaml": {
+      "bytes": 3206
+    }
+  },
+  "errors": [],
+  "warnings": []
+}
