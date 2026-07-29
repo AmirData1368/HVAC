@@ -36,10 +36,10 @@ def call(url: str, params: dict[str, Any], attempts: int = 8) -> dict[str, Any]:
                     "timeout": 240,
                     "headers": {"Referer": url.rsplit("/query", 1)[0]},
                 }
-                if method == "post":
-                    response = SESSION.post(url, data=params, **kwargs)
-                else:
-                    response = SESSION.get(url, params=params, **kwargs)
+                response = (
+                    SESSION.post(url, data=params, **kwargs)
+                    if method == "post" else SESSION.get(url, params=params, **kwargs)
+                )
                 response.raise_for_status()
                 text = response.text.lstrip()
                 if not text.startswith("{"):
@@ -63,18 +63,12 @@ def object_ids(layer_url: str) -> list[int]:
             return sorted(int(x) for x in ids)
     except Exception:
         pass
-
-    ids: list[int] = []
-    offset = 0
+    ids, offset = [], 0
     while True:
         obj = call(query_url, {
-            "where": "1=1",
-            "outFields": "OBJECTID",
-            "returnGeometry": "false",
-            "orderByFields": "OBJECTID",
-            "resultOffset": offset,
-            "resultRecordCount": 200,
-            "f": "json",
+            "where": "1=1", "outFields": "OBJECTID", "returnGeometry": "false",
+            "orderByFields": "OBJECTID", "resultOffset": offset,
+            "resultRecordCount": 200, "f": "json",
         })
         rows = obj.get("features") or []
         if not rows:
@@ -88,14 +82,15 @@ def object_ids(layer_url: str) -> list[int]:
     return sorted(set(ids))
 
 
-def fetch_features(layer_url: str, ids: list[int]) -> list[dict[str, Any]]:
+def fetch_features(name: str, layer_url: str, ids: list[int]) -> list[dict[str, Any]]:
     query_url = layer_url.rstrip("/") + "/query"
     output: list[dict[str, Any]] = []
     for start in range(0, len(ids), 5):
         batch = ids[start:start + 5]
+        print(f"{name}: requesting OBJECTID values {batch}", flush=True)
         params = {
             "objectIds": ",".join(map(str, batch)),
-            "outFields": "OBJECTID,REGION_NAME,REGION_TYPE,PARENT_REGION_NAME",
+            "outFields": "OBJECTID,REGION_NAME,REGION_TYPE",
             "returnGeometry": "true",
             "outSR": "4326",
             "maxAllowableOffset": "0.0005",
@@ -108,13 +103,17 @@ def fetch_features(layer_url: str, ids: list[int]) -> list[dict[str, Any]]:
             if len(features) != len(batch):
                 raise RuntimeError(f"batch returned {len(features)} of {len(batch)} features")
             output.extend(features)
-        except Exception:
+        except Exception as batch_error:
+            print(f"{name}: batch failed ({batch_error!r}); retrying individually", flush=True)
             for oid in batch:
                 params["objectIds"] = str(oid)
-                obj = call(query_url, params)
+                try:
+                    obj = call(query_url, params)
+                except Exception as exc:
+                    raise RuntimeError(f"{name}: geometry query failed for OBJECTID {oid}: {exc!r}") from exc
                 features = obj.get("features") or []
                 if len(features) != 1:
-                    raise RuntimeError(f"OBJECTID {oid} returned {len(features)} features")
+                    raise RuntimeError(f"{name}: OBJECTID {oid} returned {len(features)} features")
                 output.extend(features)
         time.sleep(0.15)
     return output
@@ -122,9 +121,7 @@ def fetch_features(layer_url: str, ids: list[int]) -> list[dict[str, Any]]:
 
 def validate_feature_collection(name: str, fc: dict[str, Any], expected_ids: list[int]) -> dict[str, Any]:
     features = fc.get("features") or []
-    ids = []
-    names = []
-    invalid = []
+    ids, names, invalid = [], [], []
     for feature in features:
         props = feature.get("properties") or {}
         geom = feature.get("geometry")
@@ -139,12 +136,8 @@ def validate_feature_collection(name: str, fc: dict[str, Any], expected_ids: lis
     if invalid:
         raise RuntimeError(f"{name}: invalid geometries for OBJECTID values {invalid[:10]}")
     return {
-        "name": name,
-        "feature_count": len(features),
-        "unique_region_names": len(set(names)),
-        "minimum_object_id": min(ids),
-        "maximum_object_id": max(ids),
-        "source": LAYERS[name],
+        "name": name, "feature_count": len(features), "unique_region_names": len(set(names)),
+        "minimum_object_id": min(ids), "maximum_object_id": max(ids), "source": LAYERS[name],
         "geometry_format": "GeoJSON EPSG:4326 simplified to 0.0005 degrees",
     }
 
@@ -153,19 +146,17 @@ def main() -> None:
     reports = []
     for name, layer_url in LAYERS.items():
         ids = object_ids(layer_url)
-        features = fetch_features(layer_url, ids)
+        print(f"{name}: discovered {len(ids)} object IDs", flush=True)
+        features = fetch_features(name, layer_url, ids)
         fc = {
-            "type": "FeatureCollection",
-            "name": name,
+            "type": "FeatureCollection", "name": name,
             "crs": {"type": "name", "properties": {"name": "urn:ogc:def:crs:OGC:1.3:CRS84"}},
             "features": features,
         }
         reports.append(validate_feature_collection(name, fc, ids))
         (OUT / f"{name}.geojson").write_text(json.dumps(fc, separators=(",", ":")), encoding="utf-8")
-
     report = {
-        "status": "PASS",
-        "layers": reports,
+        "status": "PASS", "layers": reports,
         "scientific_use": (
             "Merged SA2 geometry supports area-weighted 25/50/100 km biomass catchments. "
             "The area-weighting assumes uniform distribution inside each published source region and must be sensitivity-tested."
