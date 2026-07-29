@@ -1,0 +1,7 @@
+site_name,SA2_NAME21,cluster,selection_reason,primary_voltage_kv,secondary_voltage_kv,n_1_nameplate_capacity_2025_mva,available_load_capacity_2025_mva,implied_peak_proxy_2025_mw,implied_peak_proxy_2034_mw,implied_peak_proxy_min_2025_2034_mw,implied_peak_proxy_max_2025_2034_mw,compound_annual_peak_proxy_growth,radial_or_nonfirm_flag
+Suffolk Park,Byron Bay,0,cluster_medoid,132.0,11.0,0.0,-13.1,13.1,14.6,13.1,14.6,0.012118316543461516,True
+Narrandera,Narrandera,1,resource_extreme,66.0,11.0,16.0,5.7,10.3,10.8,10.3,10.8,0.005280810014972159,False
+West Jemalong,Forbes,1,cluster_medoid,66.0,11.0,4.0,1.9,2.1,2.0,2.0,2.1,-0.0054064615477574796,False
+Bombala,Bombala,2,cluster_medoid,66.0,22.0,13.0,8.0,5.0,5.5,5.0,5.5,0.01064629270751083,False
+Merrywinebone,Walgett - Lightning Ridge,3,cluster_medoid,66.0,22.0,0.0,-2.6,2.6,2.6,2.6,2.6,0.0,True
+Hallidays Point 11kV,Old Bar - Manning Point - Red Head,4,cluster_medoid;resilience_challenge,66.0,11.0,16.0,7.7,8.3,8.5,8.3,8.5,0.002649130393739929,False

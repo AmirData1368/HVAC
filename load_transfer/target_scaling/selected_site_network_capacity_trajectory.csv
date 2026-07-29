@@ -1,0 +1,61 @@
+site_name,SA2_NAME21,cluster,selection_reason,year,voltage_level_primary,voltage_level_secondary,n_1_nameplate_capacity_mva,available_capacity_load_at_n_1_mva,available_capacity_generation_a,network_capacity_implied_peak_proxy_mw,radial_or_nonfirm_flag,proxy_status,extract_date,owner,dataset,longitude,latitude,objectid
+Bombala,Bombala,2,cluster_medoid,2025.0,66.0,22.0,13.0,8.0,12.2,5.0,False,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,149.24301148,-36.89133835,2461
+Bombala,Bombala,2,cluster_medoid,2026.0,66.0,22.0,13.0,7.9,12.2,5.1,False,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,149.24301148,-36.89133835,2462
+Bombala,Bombala,2,cluster_medoid,2027.0,66.0,22.0,13.0,7.9,12.1,5.1,False,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,149.24301148,-36.89133835,2463
+Bombala,Bombala,2,cluster_medoid,2028.0,66.0,22.0,13.0,7.8,12.1,5.2,False,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,149.24301148,-36.89133835,2464
+Bombala,Bombala,2,cluster_medoid,2029.0,66.0,22.0,13.0,7.8,12.0,5.2,False,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,149.24301148,-36.89133835,2465
+Bombala,Bombala,2,cluster_medoid,2030.0,66.0,22.0,13.0,7.7,12.0,5.3,False,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,149.24301148,-36.89133835,2466
+Bombala,Bombala,2,cluster_medoid,2031.0,66.0,22.0,13.0,7.6,11.9,5.4,False,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,149.24301148,-36.89133835,2467
+Bombala,Bombala,2,cluster_medoid,2032.0,66.0,22.0,13.0,7.6,11.9,5.4,False,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,149.24301148,-36.89133835,2468
+Bombala,Bombala,2,cluster_medoid,2033.0,66.0,22.0,13.0,7.5,11.9,5.5,False,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,149.24301148,-36.89133835,2469
+Bombala,Bombala,2,cluster_medoid,2034.0,66.0,22.0,13.0,7.5,11.8,5.5,False,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,149.24301148,-36.89133835,2470
+Hallidays Point 11kV,Old Bar - Manning Point - Red Head,4,cluster_medoid;resilience_challenge,2025.0,66.0,11.0,16.0,7.7,10.5,8.3,False,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,152.47157288,-32.06842422,741
+Hallidays Point 11kV,Old Bar - Manning Point - Red Head,4,cluster_medoid;resilience_challenge,2026.0,66.0,11.0,16.0,7.7,10.0,8.3,False,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,152.47157288,-32.06842422,742
+Hallidays Point 11kV,Old Bar - Manning Point - Red Head,4,cluster_medoid;resilience_challenge,2027.0,66.0,11.0,16.0,7.7,9.6,8.3,False,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,152.47157288,-32.06842422,743
+Hallidays Point 11kV,Old Bar - Manning Point - Red Head,4,cluster_medoid;resilience_challenge,2028.0,66.0,11.0,16.0,7.7,9.3,8.3,False,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,152.47157288,-32.06842422,744
+Hallidays Point 11kV,Old Bar - Manning Point - Red Head,4,cluster_medoid;resilience_challenge,2029.0,66.0,11.0,16.0,7.6,8.9,8.4,False,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,152.47157288,-32.06842422,745
+Hallidays Point 11kV,Old Bar - Manning Point - Red Head,4,cluster_medoid;resilience_challenge,2030.0,66.0,11.0,16.0,7.6,8.6,8.4,False,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,152.47157288,-32.06842422,746
+Hallidays Point 11kV,Old Bar - Manning Point - Red Head,4,cluster_medoid;resilience_challenge,2031.0,66.0,11.0,16.0,7.6,8.3,8.4,False,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,152.47157288,-32.06842422,747
+Hallidays Point 11kV,Old Bar - Manning Point - Red Head,4,cluster_medoid;resilience_challenge,2032.0,66.0,11.0,16.0,7.6,7.9,8.4,False,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,152.47157288,-32.06842422,748
+Hallidays Point 11kV,Old Bar - Manning Point - Red Head,4,cluster_medoid;resilience_challenge,2033.0,66.0,11.0,16.0,7.6,7.7,8.4,False,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,152.47157288,-32.06842422,749
+Hallidays Point 11kV,Old Bar - Manning Point - Red Head,4,cluster_medoid;resilience_challenge,2034.0,66.0,11.0,16.0,7.5,7.4,8.5,False,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,152.47157288,-32.06842422,750
+Merrywinebone,Walgett - Lightning Ridge,3,cluster_medoid,2025.0,66.0,22.0,0.0,-2.6,-0.3,2.6,True,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,148.80603027,-29.69650078,1271
+Merrywinebone,Walgett - Lightning Ridge,3,cluster_medoid,2026.0,66.0,22.0,0.0,-2.6,-0.3,2.6,True,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,148.80603027,-29.69650078,1272
+Merrywinebone,Walgett - Lightning Ridge,3,cluster_medoid,2027.0,66.0,22.0,0.0,-2.6,-0.3,2.6,True,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,148.80603027,-29.69650078,1273
+Merrywinebone,Walgett - Lightning Ridge,3,cluster_medoid,2028.0,66.0,22.0,0.0,-2.6,-0.3,2.6,True,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,148.80603027,-29.69650078,1274
+Merrywinebone,Walgett - Lightning Ridge,3,cluster_medoid,2029.0,66.0,22.0,0.0,-2.6,-0.3,2.6,True,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,148.80603027,-29.69650078,1275
+Merrywinebone,Walgett - Lightning Ridge,3,cluster_medoid,2030.0,66.0,22.0,0.0,-2.6,-0.4,2.6,True,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,148.80603027,-29.69650078,1276
+Merrywinebone,Walgett - Lightning Ridge,3,cluster_medoid,2031.0,66.0,22.0,0.0,-2.6,-0.4,2.6,True,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,148.80603027,-29.69650078,1277
+Merrywinebone,Walgett - Lightning Ridge,3,cluster_medoid,2032.0,66.0,22.0,0.0,-2.6,-0.4,2.6,True,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,148.80603027,-29.69650078,1278
+Merrywinebone,Walgett - Lightning Ridge,3,cluster_medoid,2033.0,66.0,22.0,0.0,-2.6,-0.4,2.6,True,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,148.80603027,-29.69650078,1279
+Merrywinebone,Walgett - Lightning Ridge,3,cluster_medoid,2034.0,66.0,22.0,0.0,-2.6,-0.4,2.6,True,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,148.80603027,-29.69650078,1280
+Narrandera,Narrandera,1,resource_extreme,2025.0,66.0,11.0,16.0,5.7,8.8,10.3,False,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,146.53872681,-34.74362564,3531
+Narrandera,Narrandera,1,resource_extreme,2026.0,66.0,11.0,16.0,5.7,8.7,10.3,False,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,146.53872681,-34.74362564,3532
+Narrandera,Narrandera,1,resource_extreme,2027.0,66.0,11.0,16.0,5.7,8.6,10.3,False,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,146.53872681,-34.74362564,3533
+Narrandera,Narrandera,1,resource_extreme,2028.0,66.0,11.0,16.0,5.6,8.5,10.4,False,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,146.53872681,-34.74362564,3534
+Narrandera,Narrandera,1,resource_extreme,2029.0,66.0,11.0,16.0,5.5,8.4,10.5,False,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,146.53872681,-34.74362564,3535
+Narrandera,Narrandera,1,resource_extreme,2030.0,66.0,11.0,16.0,5.4,8.3,10.6,False,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,146.53872681,-34.74362564,3536
+Narrandera,Narrandera,1,resource_extreme,2031.0,66.0,11.0,16.0,5.4,8.2,10.6,False,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,146.53872681,-34.74362564,3537
+Narrandera,Narrandera,1,resource_extreme,2032.0,66.0,11.0,16.0,5.3,8.1,10.7,False,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,146.53872681,-34.74362564,3538
+Narrandera,Narrandera,1,resource_extreme,2033.0,66.0,11.0,16.0,5.3,8.0,10.7,False,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,146.53872681,-34.74362564,3539
+Narrandera,Narrandera,1,resource_extreme,2034.0,66.0,11.0,16.0,5.2,7.9,10.8,False,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,146.53872681,-34.74362564,3540
+Suffolk Park,Byron Bay,0,cluster_medoid,2025.0,132.0,11.0,0.0,-13.1,-6.2,13.1,True,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,153.59378052,-28.67269135,211
+Suffolk Park,Byron Bay,0,cluster_medoid,2026.0,132.0,11.0,0.0,-13.3,-6.6,13.3,True,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,153.59378052,-28.67269135,212
+Suffolk Park,Byron Bay,0,cluster_medoid,2027.0,132.0,11.0,0.0,-13.4,-7.0,13.4,True,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,153.59378052,-28.67269135,213
+Suffolk Park,Byron Bay,0,cluster_medoid,2028.0,132.0,11.0,0.0,-13.6,-7.3,13.6,True,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,153.59378052,-28.67269135,214
+Suffolk Park,Byron Bay,0,cluster_medoid,2029.0,132.0,11.0,0.0,-13.7,-7.6,13.7,True,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,153.59378052,-28.67269135,215
+Suffolk Park,Byron Bay,0,cluster_medoid,2030.0,132.0,11.0,0.0,-13.9,-7.9,13.9,True,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,153.59378052,-28.67269135,216
+Suffolk Park,Byron Bay,0,cluster_medoid,2031.0,132.0,11.0,0.0,-14.0,-8.2,14.0,True,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,153.59378052,-28.67269135,217
+Suffolk Park,Byron Bay,0,cluster_medoid,2032.0,132.0,11.0,0.0,-14.2,-8.5,14.2,True,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,153.59378052,-28.67269135,218
+Suffolk Park,Byron Bay,0,cluster_medoid,2033.0,132.0,11.0,0.0,-14.4,-8.8,14.4,True,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,153.59378052,-28.67269135,219
+Suffolk Park,Byron Bay,0,cluster_medoid,2034.0,132.0,11.0,0.0,-14.6,-9.0,14.6,True,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,153.59378052,-28.67269135,220
+West Jemalong,Forbes,1,cluster_medoid,2025.0,66.0,11.0,4.0,1.9,3.7,2.1,False,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,147.66235352,-33.37911987,2131
+West Jemalong,Forbes,1,cluster_medoid,2026.0,66.0,11.0,4.0,1.9,3.7,2.1,False,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,147.66235352,-33.37911987,2132
+West Jemalong,Forbes,1,cluster_medoid,2027.0,66.0,11.0,4.0,1.9,3.7,2.1,False,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,147.66235352,-33.37911987,2133
+West Jemalong,Forbes,1,cluster_medoid,2028.0,66.0,11.0,4.0,1.9,3.7,2.1,False,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,147.66235352,-33.37911987,2134
+West Jemalong,Forbes,1,cluster_medoid,2029.0,66.0,11.0,4.0,1.9,3.6,2.1,False,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,147.66235352,-33.37911987,2135
+West Jemalong,Forbes,1,cluster_medoid,2030.0,66.0,11.0,4.0,1.9,3.6,2.1,False,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,147.66235352,-33.37911987,2136
+West Jemalong,Forbes,1,cluster_medoid,2031.0,66.0,11.0,4.0,1.9,3.6,2.1,False,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,147.66235352,-33.37911987,2137
+West Jemalong,Forbes,1,cluster_medoid,2032.0,66.0,11.0,4.0,1.9,3.6,2.1,False,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,147.66235352,-33.37911987,2138
+West Jemalong,Forbes,1,cluster_medoid,2033.0,66.0,11.0,4.0,1.9,3.6,2.1,False,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,147.66235352,-33.37911987,2139
+West Jemalong,Forbes,1,cluster_medoid,2034.0,66.0,11.0,4.0,2.0,3.6,2.0,False,nonnegative_derived_proxy,February 2025,Essential Energy,Secondary,147.66235352,-33.37911987,2140

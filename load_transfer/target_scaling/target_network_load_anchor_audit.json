@@ -1,0 +1,133 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "check": "all_selected_sites_matched",
+      "passed": true,
+      "value": 6
+    },
+    {
+      "check": "ten_year_trajectory_per_site",
+      "passed": true
+    },
+    {
+      "check": "nonnegative_implied_peak",
+      "passed": true
+    },
+    {
+      "check": "official_owner",
+      "passed": true
+    },
+    {
+      "check": "year_range",
+      "passed": true
+    }
+  ],
+  "selected_site_count": 6,
+  "source": "validated_bundle/bundle_v6/raw/nsw_arcgis/essential_energy_uhc_2025/01_Secondary.geojson",
+  "source_fields": [
+    "n_1_nameplate_capacity",
+    "available_capacity_load_at_n_1",
+    "year"
+  ],
+  "derived_equation": "network_capacity_implied_peak_proxy = n_1_nameplate_capacity - available_capacity_load_at_n_1",
+  "interpretation": "The result is a network-capacity-implied demand proxy derived from official attributes, not measured load. Sites with zero N-1 nameplate capacity are flagged radial_or_nonfirm and require wider uncertainty.",
+  "selected_site_summaries": [
+    {
+      "site_name": "Suffolk Park",
+      "SA2_NAME21": "Byron Bay",
+      "cluster": 0,
+      "selection_reason": "cluster_medoid",
+      "primary_voltage_kv": 132.0,
+      "secondary_voltage_kv": 11.0,
+      "n_1_nameplate_capacity_2025_mva": 0.0,
+      "available_load_capacity_2025_mva": -13.1,
+      "implied_peak_proxy_2025_mw": 13.1,
+      "implied_peak_proxy_2034_mw": 14.6,
+      "implied_peak_proxy_min_2025_2034_mw": 13.1,
+      "implied_peak_proxy_max_2025_2034_mw": 14.6,
+      "compound_annual_peak_proxy_growth": 0.012118316543461516,
+      "radial_or_nonfirm_flag": true
+    },
+    {
+      "site_name": "Narrandera",
+      "SA2_NAME21": "Narrandera",
+      "cluster": 1,
+      "selection_reason": "resource_extreme",
+      "primary_voltage_kv": 66.0,
+      "secondary_voltage_kv": 11.0,
+      "n_1_nameplate_capacity_2025_mva": 16.0,
+      "available_load_capacity_2025_mva": 5.7,
+      "implied_peak_proxy_2025_mw": 10.3,
+      "implied_peak_proxy_2034_mw": 10.8,
+      "implied_peak_proxy_min_2025_2034_mw": 10.3,
+      "implied_peak_proxy_max_2025_2034_mw": 10.8,
+      "compound_annual_peak_proxy_growth": 0.005280810014972159,
+      "radial_or_nonfirm_flag": false
+    },
+    {
+      "site_name": "West Jemalong",
+      "SA2_NAME21": "Forbes",
+      "cluster": 1,
+      "selection_reason": "cluster_medoid",
+      "primary_voltage_kv": 66.0,
+      "secondary_voltage_kv": 11.0,
+      "n_1_nameplate_capacity_2025_mva": 4.0,
+      "available_load_capacity_2025_mva": 1.9,
+      "implied_peak_proxy_2025_mw": 2.1,
+      "implied_peak_proxy_2034_mw": 2.0,
+      "implied_peak_proxy_min_2025_2034_mw": 2.0,
+      "implied_peak_proxy_max_2025_2034_mw": 2.1,
+      "compound_annual_peak_proxy_growth": -0.0054064615477574796,
+      "radial_or_nonfirm_flag": false
+    },
+    {
+      "site_name": "Bombala",
+      "SA2_NAME21": "Bombala",
+      "cluster": 2,
+      "selection_reason": "cluster_medoid",
+      "primary_voltage_kv": 66.0,
+      "secondary_voltage_kv": 22.0,
+      "n_1_nameplate_capacity_2025_mva": 13.0,
+      "available_load_capacity_2025_mva": 8.0,
+      "implied_peak_proxy_2025_mw": 5.0,
+      "implied_peak_proxy_2034_mw": 5.5,
+      "implied_peak_proxy_min_2025_2034_mw": 5.0,
+      "implied_peak_proxy_max_2025_2034_mw": 5.5,
+      "compound_annual_peak_proxy_growth": 0.01064629270751083,
+      "radial_or_nonfirm_flag": false
+    },
+    {
+      "site_name": "Merrywinebone",
+      "SA2_NAME21": "Walgett - Lightning Ridge",
+      "cluster": 3,
+      "selection_reason": "cluster_medoid",
+      "primary_voltage_kv": 66.0,
+      "secondary_voltage_kv": 22.0,
+      "n_1_nameplate_capacity_2025_mva": 0.0,
+      "available_load_capacity_2025_mva": -2.6,
+      "implied_peak_proxy_2025_mw": 2.6,
+      "implied_peak_proxy_2034_mw": 2.6,
+      "implied_peak_proxy_min_2025_2034_mw": 2.6,
+      "implied_peak_proxy_max_2025_2034_mw": 2.6,
+      "compound_annual_peak_proxy_growth": 0.0,
+      "radial_or_nonfirm_flag": true
+    },
+    {
+      "site_name": "Hallidays Point 11kV",
+      "SA2_NAME21": "Old Bar - Manning Point - Red Head",
+      "cluster": 4,
+      "selection_reason": "cluster_medoid;resilience_challenge",
+      "primary_voltage_kv": 66.0,
+      "secondary_voltage_kv": 11.0,
+      "n_1_nameplate_capacity_2025_mva": 16.0,
+      "available_load_capacity_2025_mva": 7.7,
+      "implied_peak_proxy_2025_mw": 8.3,
+      "implied_peak_proxy_2034_mw": 8.5,
+      "implied_peak_proxy_min_2025_2034_mw": 8.3,
+      "implied_peak_proxy_max_2025_2034_mw": 8.5,
+      "compound_annual_peak_proxy_growth": 0.002649130393739929,
+      "radial_or_nonfirm_flag": false
+    }
+  ]
+}
