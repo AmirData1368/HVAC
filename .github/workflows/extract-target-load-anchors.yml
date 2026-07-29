@@ -1,0 +1,66 @@
+name: Extract target-site network load anchors
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/extract_target_network_load_anchors.py'
+      - 'model_ready_inputs/target_load_scaling_protocol.yaml'
+      - 'site_selection/results/recommended_site_shortlist.csv'
+      - '.github/workflows/extract-target-load-anchors.yml'
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  anchors:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      SOURCE_RUN_ID: '30434262791'
+      SOURCE_ARTIFACT: 'regional-nsw-microgrid-data-bundle-v6'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install pandas geopandas pyogrio shapely
+      - name: Download and verify immutable source bundle
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p source_artifact
+          gh run download "$SOURCE_RUN_ID" --repo "$GITHUB_REPOSITORY" --name "$SOURCE_ARTIFACT" --dir source_artifact
+          cd source_artifact
+          sha256sum -c regional_nsw_microgrid_data_bundle_v6.tar.gz.sha256
+          mkdir -p ../validated_bundle
+          tar -xzf regional_nsw_microgrid_data_bundle_v6.tar.gz -C ../validated_bundle
+      - name: Extract 2025-2034 official network attributes and derived proxies
+        run: |
+          rm -rf load_transfer/target_scaling
+          python scripts/extract_target_network_load_anchors.py \
+            --bundle-root validated_bundle/bundle_v6 \
+            --shortlist site_selection/results/recommended_site_shortlist.csv \
+            --output-dir load_transfer/target_scaling
+      - name: Upload target load-anchor package
+        uses: actions/upload-artifact@v4
+        with:
+          name: regional-nsw-target-load-network-anchors-v1
+          path: |
+            model_ready_inputs/target_load_scaling_protocol.yaml
+            load_transfer/target_scaling
+          retention-days: 90
+      - name: Commit compact target anchor outputs
+        run: |
+          cat > load_transfer/target_scaling/latest_run.json <<EOF
+          {"run_id": ${GITHUB_RUN_ID}, "run_attempt": ${GITHUB_RUN_ATTEMPT}, "commit_sha": "${GITHUB_SHA}", "source_data_run_id": ${SOURCE_RUN_ID}, "artifact": "regional-nsw-target-load-network-anchors-v1"}
+          EOF
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git pull --rebase
+          git add load_transfer/target_scaling
+          git commit -m "Store selected-site network load anchors" || exit 0
+          git push
