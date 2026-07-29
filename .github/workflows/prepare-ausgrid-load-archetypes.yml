@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - 'scripts/prepare_ausgrid_load_archetypes.py'
+      - 'scripts/prepare_ausgrid_load_archetypes_v2.py'
       - 'requirements-load-transfer.txt'
       - '.github/workflows/prepare-ausgrid-load-archetypes.yml'
 
@@ -53,7 +54,7 @@ jobs:
       - name: Prepare source-domain daily and station-year archetype features
         run: |
           find load_transfer/results -type f ! -name preparation_latest_attempt.json -delete
-          python scripts/prepare_ausgrid_load_archetypes.py \
+          python scripts/prepare_ausgrid_load_archetypes_v2.py \
             --input-root validated_bundle/bundle_v6/raw/ausgrid_zone_substation_load/extracted \
             --output-dir load_transfer/results
       - name: Upload full source-load preparation package
@@ -70,7 +71,7 @@ jobs:
           cat > load_transfer/results/preparation_latest_run.json <<EOF
           {"run_id": ${GITHUB_RUN_ID}, "run_attempt": ${GITHUB_RUN_ATTEMPT}, "commit_sha": "${GITHUB_SHA}", "source_data_run_id": ${SOURCE_RUN_ID}, "artifact": "ausgrid-source-load-archetype-preparation-v1"}
           EOF
-          git pull --rebase
           git add load_transfer/results/ausgrid_file_qc.csv load_transfer/results/ausgrid_station_continuity.csv load_transfer/results/ausgrid_preparation_failures.csv load_transfer/results/ausgrid_schema_audit.json load_transfer/results/load_archetype_preparation_audit.json load_transfer/results/preparation_latest_run.json
           git commit -m "Store Ausgrid source-load quality and archetype preparation audit" || exit 0
+          git pull --rebase
           git push
