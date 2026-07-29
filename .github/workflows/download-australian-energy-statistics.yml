@@ -1,0 +1,45 @@
+name: Download and audit Australian Energy Statistics 2025
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/download_australian_energy_statistics.py'
+      - '.github/workflows/download-australian-energy-statistics.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  energy-statistics:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          pip install pandas openpyxl requests beautifulsoup4 playwright
+          playwright install --with-deps chromium
+      - name: Download and audit official Tables B F and L
+        run: python scripts/download_australian_energy_statistics.py
+      - name: Upload official energy-statistics package
+        uses: actions/upload-artifact@v4
+        with:
+          name: australian-energy-statistics-2025-model-inputs
+          path: model_ready_inputs/reference/australian_energy_statistics_2025
+          retention-days: 90
+      - name: Commit workbooks, audit and run metadata
+        run: |
+          cat > model_ready_inputs/reference/australian_energy_statistics_2025/latest_run.json <<EOF
+          {"run_id": ${GITHUB_RUN_ID}, "run_attempt": ${GITHUB_RUN_ATTEMPT}, "commit_sha": "${GITHUB_SHA}", "artifact": "australian-energy-statistics-2025-model-inputs"}
+          EOF
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git pull --rebase
+          git add model_ready_inputs/reference/australian_energy_statistics_2025
+          git commit -m "Store official Australian Energy Statistics model inputs" || exit 0
+          git push
