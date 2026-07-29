@@ -1,0 +1,50 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "check": "candidate_count",
+      "passed": true,
+      "detail": "20 sites"
+    },
+    {
+      "check": "weather_coverage",
+      "passed": true,
+      "detail": "minimum=11"
+    },
+    {
+      "check": "critical_features_complete",
+      "passed": true,
+      "detail": "no missing critical values"
+    },
+    {
+      "check": "catchment_totals_monotonic",
+      "passed": true,
+      "detail": "25 km <= 50 km <= 100 km"
+    },
+    {
+      "check": "all_clusters_represented",
+      "passed": true,
+      "detail": "5/5"
+    },
+    {
+      "check": "shortlist_size",
+      "passed": true,
+      "detail": "6 selected"
+    },
+    {
+      "check": "no_duplicate_sites",
+      "passed": true,
+      "detail": "unique site names"
+    },
+    {
+      "check": "biomass_geometry_coverage_of_nsw_land",
+      "passed": true,
+      "detail": "minimum=1.000"
+    },
+    {
+      "check": "candidate_sites_inside_nsw_land",
+      "passed": true,
+      "detail": "minimum_25km_land_fraction=0.315"
+    }
+  ]
+}

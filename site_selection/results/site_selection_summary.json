@@ -1,0 +1,116 @@
+{
+  "status": "PASS",
+  "best_k": 5,
+  "candidate_sites": 20,
+  "selected_sites": [
+    {
+      "site_name": "Suffolk Park",
+      "SA2_NAME21": "Byron Bay",
+      "cluster": 0,
+      "selection_reason": "cluster_medoid"
+    },
+    {
+      "site_name": "Narrandera",
+      "SA2_NAME21": "Narrandera",
+      "cluster": 1,
+      "selection_reason": "resource_extreme"
+    },
+    {
+      "site_name": "West Jemalong",
+      "SA2_NAME21": "Forbes",
+      "cluster": 1,
+      "selection_reason": "cluster_medoid"
+    },
+    {
+      "site_name": "Bombala",
+      "SA2_NAME21": "Bombala",
+      "cluster": 2,
+      "selection_reason": "cluster_medoid"
+    },
+    {
+      "site_name": "Merrywinebone",
+      "SA2_NAME21": "Walgett - Lightning Ridge",
+      "cluster": 3,
+      "selection_reason": "cluster_medoid"
+    },
+    {
+      "site_name": "Hallidays Point 11kV",
+      "SA2_NAME21": "Old Bar - Manning Point - Red Head",
+      "cluster": 4,
+      "selection_reason": "cluster_medoid;resilience_challenge"
+    }
+  ],
+  "validation": {
+    "status": "PASS",
+    "checks": [
+      {
+        "check": "candidate_count",
+        "passed": true,
+        "detail": "20 sites"
+      },
+      {
+        "check": "weather_coverage",
+        "passed": true,
+        "detail": "minimum=11"
+      },
+      {
+        "check": "critical_features_complete",
+        "passed": true,
+        "detail": "no missing critical values"
+      },
+      {
+        "check": "catchment_totals_monotonic",
+        "passed": true,
+        "detail": "25 km <= 50 km <= 100 km"
+      },
+      {
+        "check": "all_clusters_represented",
+        "passed": true,
+        "detail": "5/5"
+      },
+      {
+        "check": "shortlist_size",
+        "passed": true,
+        "detail": "6 selected"
+      },
+      {
+        "check": "no_duplicate_sites",
+        "passed": true,
+        "detail": "unique site names"
+      },
+      {
+        "check": "biomass_geometry_coverage_of_nsw_land",
+        "passed": true,
+        "detail": "minimum=1.000"
+      },
+      {
+        "check": "candidate_sites_inside_nsw_land",
+        "passed": true,
+        "detail": "minimum_25km_land_fraction=0.315"
+      }
+    ]
+  },
+  "biomass_method": "Area-weighted allocation of official source-region totals to 25/50/100 km buffers; uniform within-region density is an explicit proxy assumption; coverage is evaluated against NSW land inside each buffer rather than ocean or interstate area.",
+  "clustering_features": [
+    "ghi_kwh_m2_day",
+    "ghi_daily_cv",
+    "wind50_mean_ms",
+    "wind50_p90_ms",
+    "wind50_cv",
+    "temp_mean_c",
+    "temp_p95_c",
+    "resource_complementarity",
+    "cooling_degree_hours_24c_per_year",
+    "crop_dry_tpy_50km",
+    "manure_vs_tpy_50km",
+    "organic_waste_tpy_50km",
+    "forestry_dry_tpy_50km",
+    "population_2021_50km",
+    "population_density"
+  ],
+  "cluster_algorithms": [
+    "KMeans",
+    "GaussianMixture",
+    "AgglomerativeWard"
+  ]
+}
