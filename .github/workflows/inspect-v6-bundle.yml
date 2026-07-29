@@ -1,0 +1,71 @@
+name: Inspect validated v6 bundle
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/inspect_v6_bundle.py'
+      - '.github/workflows/inspect-v6-bundle.yml'
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      SOURCE_RUN_ID: '30434262791'
+      SOURCE_ARTIFACT: 'regional-nsw-microgrid-data-bundle-v6'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: Install inspection dependencies
+        run: pip install pandas pyarrow
+
+      - name: Download validated bundle
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p source_artifact
+          gh run download "$SOURCE_RUN_ID" \
+            --repo "$GITHUB_REPOSITORY" \
+            --name "$SOURCE_ARTIFACT" \
+            --dir source_artifact
+          ls -lh source_artifact
+
+      - name: Run independent QA inspection
+        run: |
+          rm -rf generated/v6_qa
+          python scripts/inspect_v6_bundle.py \
+            source_artifact/regional_nsw_microgrid_data_bundle_v6.tar.gz \
+            source_artifact/regional_nsw_microgrid_data_bundle_v6.tar.gz.sha256 \
+            generated/v6_qa
+          rm -rf generated/v6_qa/extracted
+          ls -lh generated/v6_qa
+
+      - name: Upload QA report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: regional-nsw-v6-independent-qa
+          path: generated/v6_qa
+          retention-days: 30
+
+      - name: Commit compact QA reports
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add generated/v6_qa/QA_SUMMARY.md \
+                  generated/v6_qa/qa_report.json \
+                  generated/v6_qa/core_validation_report.csv \
+                  generated/v6_qa/file_inventory.csv \
+                  generated/v6_qa/failed_downloads.csv || true
+          git commit -m "Add independent QA report for v6 data bundle" || exit 0
+          git push
