@@ -19,6 +19,17 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+      - name: Record validation attempt
+        run: |
+          mkdir -p model_ready_validation
+          cat > model_ready_validation/latest_attempt.json <<EOF
+          {"run_id": ${GITHUB_RUN_ID}, "run_attempt": ${GITHUB_RUN_ATTEMPT}, "commit_sha": "${GITHUB_SHA}", "package_artifact": "regional-nsw-model-ready-scientific-inputs-v1", "diagnostic_artifact": "regional-nsw-model-ready-input-validation"}
+          EOF
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add model_ready_validation/latest_attempt.json
+          git commit -m "Record model-ready input validation attempt" || true
+          git push
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -43,21 +54,13 @@ jobs:
           path: model_ready_validation
           if-no-files-found: warn
           retention-days: 90
-      - name: Record latest successful validation run
+      - name: Record latest successful validation run and reports
         if: success()
         run: |
-          mkdir -p model_ready_validation
           cat > model_ready_validation/latest_run.json <<EOF
-          {
-            "run_id": ${GITHUB_RUN_ID},
-            "run_attempt": ${GITHUB_RUN_ATTEMPT},
-            "commit_sha": "${GITHUB_SHA}",
-            "package_artifact": "regional-nsw-model-ready-scientific-inputs-v1",
-            "diagnostic_artifact": "regional-nsw-model-ready-input-validation"
-          }
+          {"run_id": ${GITHUB_RUN_ID}, "run_attempt": ${GITHUB_RUN_ATTEMPT}, "commit_sha": "${GITHUB_SHA}", "package_artifact": "regional-nsw-model-ready-scientific-inputs-v1", "diagnostic_artifact": "regional-nsw-model-ready-input-validation"}
           EOF
-          git config user.name github-actions[bot]
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add model_ready_validation/latest_run.json
-          git commit -m "Record latest model-ready input validation run" || exit 0
+          git pull --rebase
+          git add model_ready_validation/latest_run.json model_ready_validation/model_ready_input_validation.json model_ready_validation/fuel_logistics_validation.json
+          git commit -m "Store latest model-ready scientific input validation reports" || exit 0
           git push
