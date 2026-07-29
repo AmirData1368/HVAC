@@ -1,0 +1,13 @@
+{
+  "run_id": 30436098131,
+  "run_attempt": 1,
+  "commit_sha": "64240e333be7adb55572d8bfa0711021c4668e40",
+  "source_run_id": 30434262791,
+  "artifact_names": [
+    "regional-nsw-v6-part-00",
+    "regional-nsw-v6-part-01",
+    "regional-nsw-v6-part-02",
+    "regional-nsw-v6-part-03",
+    "regional-nsw-v6-reassembly-info"
+  ]
+}
