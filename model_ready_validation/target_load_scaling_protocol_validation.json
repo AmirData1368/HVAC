@@ -1,0 +1,7 @@
+{
+  "status": "PASS",
+  "file": "model_ready_inputs/target_load_scaling_protocol.yaml",
+  "bytes": 3549,
+  "errors": [],
+  "scientific_rule": "Absolute Ausgrid demand is never transferred; target scale requires an official-network-attribute proxy, independent statistical plausibility bounds and pseudo-target validation."
+}
