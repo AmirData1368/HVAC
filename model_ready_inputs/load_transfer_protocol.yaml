@@ -1,0 +1,74 @@
+version: 1.0.0
+purpose: >
+  Transfer temporal demand archetypes learned from measured Ausgrid zone-substation data
+  to regional Essential Energy candidate sites without falsely labelling transferred profiles
+  as measured local demand.
+
+source_domain:
+  operator: Ausgrid
+  data_status: measured_15_minute_zone_substation_demand
+  period: 2015-2025
+  role:
+    - archetype_learning
+    - forecasting_pretraining
+    - external_validation
+
+target_domain:
+  operator: Essential Energy
+  data_status: no_public_measured_load_attached_to_selected_sites
+  features:
+    - substation_GIS_attributes
+    - ABS_SA2_population_and_census
+    - NASA_POWER_weather
+    - biomass_and_land_use_features
+
+pipeline:
+  - id: L1
+    action: quality_control_and_timezone_normalisation
+    rule: Preserve raw local timestamps; create an explicit UTC index and an Australia/Sydney local index with DST flags.
+  - id: L2
+    action: measured_source_clustering
+    rule: Cluster normalised daily, weekly, seasonal, peak-to-average, ramp and temperature-sensitivity features; never cluster on target labels.
+  - id: L3
+    action: target_archetype_matching
+    rule: Match target sites to source clusters using climate, population, economic activity, substation scale and load-shape covariates with uncertainty scores.
+  - id: L4
+    action: profile_scaling
+    rule: Scale source archetypes using independently estimated target annual energy and peak-demand distributions; do not copy absolute Ausgrid demand.
+  - id: L5
+    action: stochastic_profile_generation
+    rule: Generate multiple target profiles by block-bootstrap or conditional generative modelling so profile uncertainty enters optimisation.
+  - id: L6
+    action: domain_adaptation_validation
+    rule: Treat held-out Ausgrid substations as pseudo-targets; hide their demand during matching and test reconstruction against their measured series.
+
+mandatory_validation:
+  temporal_split: rolling_origin_only
+  held_out_sites: true
+  metrics:
+    - NMAE
+    - NRMSE
+    - peak_error
+    - annual_energy_error
+    - load_duration_curve_error
+    - ramp_distribution_distance
+    - seasonal_profile_error
+  uncertainty:
+    - prediction_interval_coverage
+    - CRPS_or_pinball_loss
+
+allowed_manuscript_terms:
+  - real-data-derived regional load profile
+  - transferred Australian load archetype
+  - reconstructed target-site demand scenario
+  - probabilistic regional demand profile
+
+forbidden_manuscript_terms:
+  - measured demand of the selected Essential Energy site
+  - actual load of the selected regional community
+  - site-monitored load
+
+release_gate:
+  requirement: >
+    No target-site optimisation may begin until pseudo-target validation demonstrates acceptable
+    peak, annual-energy, load-duration and temporal-shape errors and ChatGPT approves the report.
