@@ -1,0 +1,74 @@
+version: 1.0.0
+status: mandatory
+
+data_gates:
+  - no_duplicate_timestamp_after_timezone_conversion
+  - raw_data_immutable_and_sha256_recorded
+  - units_explicit_and_dimensionally_checked
+  - missingness_reported_by_site_variable_and_month
+  - train_validation_test_split_is_temporal
+  - transferred_load_never_labelled_measured_target_load
+
+physics_gates:
+  energy_balance_relative_tolerance: 1.0e-6
+  battery_soc_bounds_hard: true
+  simultaneous_charge_discharge_forbidden: true
+  pv_model: pvlib_ModelChain_or_equivalent_validated
+  wind_model: manufacturer_power_curve_with_air_density_and_hub_height_correction
+  biomass_inventory_balance: mandatory
+  biomass_feedstock_limit: mandatory
+  degradation_model_primary: NREL_BLAST_Lite_LFP
+  degradation_fallback: rainflow_plus_equivalent_full_cycles
+  degradation_crosscheck_required: true
+
+forecasting_gates:
+  baselines:
+    - persistence
+    - seasonal_naive
+    - linear_or_SARIMA
+  validation:
+    - rolling_origin
+    - leave_one_site_out
+  deterministic_metrics:
+    - MAE
+    - RMSE
+    - NMAE
+    - peak_error
+  probabilistic_metrics:
+    - pinball_loss
+    - interval_coverage
+    - CRPS
+  statistical_comparison: Diebold_Mariano_or_block_bootstrap
+
+surrogate_gates:
+  independent_test_set: true
+  target_metrics:
+    R2_minimum: 0.95
+    NRMSE_maximum: 0.05
+  uncertainty_or_ensemble_required: true
+  active_learning_required: true
+  pareto_candidates_exact_resimulation_fraction: 1.0
+
+optimisation_gates:
+  objectives:
+    - net_present_cost
+    - lifecycle_CO2e
+    - expected_energy_not_served
+    - resilience_metric
+  repeated_random_seeds_minimum: 10
+  feasibility_recheck: exact_simulator
+  convergence_evidence:
+    - hypervolume_history
+    - epsilon_indicator_or_generational_distance
+  final_solution_rule: no_surrogate_only_solution
+
+reporting_gates:
+  every_table_reproducible_from_saved_machine_readable_output: true
+  every_figure_has_source_data_file: true
+  all_assumptions_tagged:
+    - direct_official
+    - derived_from_official
+    - scenario_assumption
+    - model_choice
+  scenario_assumptions_must_have_global_sensitivity: true
+  no_claim_of_national_representativeness_without_weighted_sampling: true
