@@ -1,0 +1,47 @@
+name: Download and validate NSW biomass region geometry
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/download_biomass_region_geometry.py'
+      - '.github/workflows/download-biomass-geometry.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  geometry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install downloader dependency
+        run: pip install 'requests>=2.32'
+      - name: Download geometries with per-object retry and validate
+        run: python scripts/download_biomass_region_geometry.py
+      - name: Upload validated geometry package
+        uses: actions/upload-artifact@v4
+        with:
+          name: nsw-biomass-region-geometry-v1
+          path: site_selection/geometry
+          retention-days: 90
+      - name: Commit compact validated geometry and run metadata
+        run: |
+          cat > site_selection/geometry/latest_run.json <<EOF
+          {
+            "run_id": ${GITHUB_RUN_ID},
+            "run_attempt": ${GITHUB_RUN_ATTEMPT},
+            "commit_sha": "${GITHUB_SHA}",
+            "artifact": "nsw-biomass-region-geometry-v1"
+          }
+          EOF
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add site_selection/geometry
+          git commit -m "Store validated NSW biomass region geometries" || exit 0
+          git push
