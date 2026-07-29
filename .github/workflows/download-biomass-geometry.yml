@@ -17,6 +17,22 @@ jobs:
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
+      - name: Record workflow attempt before network calls
+        run: |
+          mkdir -p site_selection/geometry
+          cat > site_selection/geometry/latest_attempt.json <<EOF
+          {
+            "run_id": ${GITHUB_RUN_ID},
+            "run_attempt": ${GITHUB_RUN_ATTEMPT},
+            "commit_sha": "${GITHUB_SHA}",
+            "artifact": "nsw-biomass-region-geometry-v1"
+          }
+          EOF
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add site_selection/geometry/latest_attempt.json
+          git commit -m "Record biomass geometry workflow attempt" || true
+          git push
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -40,8 +56,7 @@ jobs:
             "artifact": "nsw-biomass-region-geometry-v1"
           }
           EOF
-          git config user.name github-actions[bot]
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git pull --rebase
           git add site_selection/geometry
           git commit -m "Store validated NSW biomass region geometries" || exit 0
           git push
