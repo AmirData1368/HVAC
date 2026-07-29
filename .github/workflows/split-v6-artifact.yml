@@ -9,7 +9,7 @@ on:
 
 permissions:
   actions: read
-  contents: read
+  contents: write
 
 jobs:
   split:
@@ -19,6 +19,8 @@ jobs:
       SOURCE_RUN_ID: '30434262791'
       SOURCE_ARTIFACT: 'regional-nsw-microgrid-data-bundle-v6'
     steps:
+      - uses: actions/checkout@v4
+
       - name: Download validated v6 artifact from existing successful run
         env:
           GH_TOKEN: ${{ github.token }}
@@ -101,3 +103,27 @@ jobs:
             chunks/original_bundle_sha256.txt
             chunks/REASSEMBLE.txt
           retention-days: 30
+
+      - name: Record run ID for automated retrieval
+        run: |
+          mkdir -p generated
+          cat > generated/latest_split_v6_run.json <<EOF
+          {
+            "run_id": ${GITHUB_RUN_ID},
+            "run_attempt": ${GITHUB_RUN_ATTEMPT},
+            "commit_sha": "${GITHUB_SHA}",
+            "source_run_id": ${SOURCE_RUN_ID},
+            "artifact_names": [
+              "regional-nsw-v6-part-00",
+              "regional-nsw-v6-part-01",
+              "regional-nsw-v6-part-02",
+              "regional-nsw-v6-part-03",
+              "regional-nsw-v6-reassembly-info"
+            ]
+          }
+          EOF
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add generated/latest_split_v6_run.json
+          git commit -m "Record latest split v6 artifact run" || exit 0
+          git push
