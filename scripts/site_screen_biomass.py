@@ -125,26 +125,33 @@ def area_weighted_catchments(
             buffer_area = buffer.area
             suffix = f"_{radius}km"
 
-            def allocate(regions: gpd.GeoDataFrame, columns: list[str]):
+            def allocate(regions: gpd.GeoDataFrame, columns: list[str], distances: bool = False):
                 subset = regions[regions.intersects(buffer)].copy()
                 if subset.empty:
-                    return {column: 0.0 for column in columns}, 0.0, 0
-                intersection = subset.geometry.intersection(buffer).area
-                fraction = (intersection / subset.polygon_area_m2).clip(0.0, 1.0)
-                values = {
-                    column: float((subset[column].fillna(0.0) * fraction).sum())
-                    for column in columns
-                }
-                return values, float(intersection.sum() / buffer_area), len(subset)
+                    values = {column: 0.0 for column in columns}
+                    weighted = {column.replace("_tpy", "_weighted_distance_km"): 0.0 for column in columns if column.endswith("_tpy")}
+                    return values, weighted, 0.0, 0
+                intersections = subset.geometry.intersection(buffer)
+                area = intersections.area
+                fraction = (area / subset.polygon_area_m2).clip(0.0, 1.0)
+                values, weighted = {}, {}
+                centroid_distance = intersections.centroid.distance(site.geometry) / 1000.0
+                for column in columns:
+                    allocated = subset[column].fillna(0.0) * fraction
+                    values[column] = float(allocated.sum())
+                    if distances and column.endswith("_tpy"):
+                        key = column.replace("_tpy", "_weighted_distance_km")
+                        weighted[key] = float((allocated * centroid_distance).sum() / allocated.sum()) if allocated.sum() > 0 else 0.0
+                return values, weighted, float(area.sum() / buffer_area), len(subset)
 
-            population, pop_coverage, pop_count = allocate(abs_sa2, ["population_2021"])
-            biomass, bio_coverage, bio_count = allocate(
-                biomass_regions, ["crop_dry_tpy", "manure_vs_tpy", "organic_waste_tpy"]
+            population, _, pop_coverage, pop_count = allocate(abs_sa2, ["population_2021"])
+            biomass, bio_distance, bio_coverage, bio_count = allocate(
+                biomass_regions, ["crop_dry_tpy", "manure_vs_tpy", "organic_waste_tpy"], True
             )
-            forestry, forest_coverage, forest_count = allocate(
-                forestry_regions, ["forestry_dry_tpy"]
+            forestry, forest_distance, forest_coverage, forest_count = allocate(
+                forestry_regions, ["forestry_dry_tpy"], True
             )
-            for key, value in {**population, **biomass, **forestry}.items():
+            for key, value in {**population, **biomass, **forestry, **bio_distance, **forest_distance}.items():
                 record[key + suffix] = value
             record["population_geometry_coverage" + suffix] = pop_coverage
             record["biomass_geometry_coverage" + suffix] = bio_coverage
