@@ -1,0 +1,48 @@
+name: Validate regional NSW site-selection sensitivity
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/site_selection_sensitivity.py'
+      - 'site_selection/results/site_feature_matrix.csv'
+      - 'site_selection/results/cluster_model_comparison.csv'
+      - '.github/workflows/site-selection-sensitivity.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  sensitivity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install pandas numpy scikit-learn
+      - name: Evaluate catchment, scaler and feature-group sensitivity
+        run: python scripts/site_selection_sensitivity.py
+      - name: Upload sensitivity package
+        uses: actions/upload-artifact@v4
+        with:
+          name: regional-nsw-site-selection-sensitivity-v1
+          path: |
+            site_selection/results/site_selection_sensitivity.csv
+            site_selection/results/site_selection_frequency.csv
+            site_selection/results/site_selection_sensitivity_audit.json
+          retention-days: 90
+      - name: Commit sensitivity results and run metadata
+        run: |
+          cat > site_selection/results/sensitivity_latest_run.json <<EOF
+          {"run_id": ${GITHUB_RUN_ID}, "run_attempt": ${GITHUB_RUN_ATTEMPT}, "commit_sha": "${GITHUB_SHA}", "artifact": "regional-nsw-site-selection-sensitivity-v1"}
+          EOF
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git pull --rebase
+          git add site_selection/results/site_selection_sensitivity.csv site_selection/results/site_selection_frequency.csv site_selection/results/site_selection_sensitivity_audit.json site_selection/results/sensitivity_latest_run.json
+          git commit -m "Store regional site-selection sensitivity results" || exit 0
+          git push
