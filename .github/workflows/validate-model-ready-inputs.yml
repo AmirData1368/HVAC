@@ -1,0 +1,42 @@
+name: Validate model-ready scientific inputs
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'model_ready_inputs/**'
+      - 'scripts/validate_model_ready_inputs.py'
+      - '.github/workflows/validate-model-ready-inputs.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate schemas, bounds and scientific governance rules
+        run: python scripts/validate_model_ready_inputs.py
+      - name: Upload validated model-ready input package
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: regional-nsw-model-ready-scientific-inputs-v1
+          path: |
+            model_ready_inputs
+            model_ready_validation/model_ready_input_validation.json
+          retention-days: 90
+      - name: Upload validation diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: regional-nsw-model-ready-input-validation
+          path: model_ready_validation/model_ready_input_validation.json
+          if-no-files-found: warn
+          retention-days: 90
