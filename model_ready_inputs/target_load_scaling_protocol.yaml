@@ -1,0 +1,90 @@
+version: 1.0.0-draft
+purpose: >
+  Combine source-domain Ausgrid temporal archetypes with independent target-site scale anchors
+  without copying absolute source megawatts or claiming measured Essential Energy demand.
+
+terminology:
+  allowed:
+    - network-capacity-implied peak-demand proxy
+    - official-network-attribute-constrained target demand
+    - real-data-derived probabilistic target load
+    - transferred temporal demand archetype
+  forbidden:
+    - measured target-site load
+    - actual community demand
+    - Essential Energy metered load
+
+layers:
+  temporal_shape:
+    source: quality-controlled normalised Ausgrid 15-minute profiles
+    transfer_unit: dimensionless interval profile with daily mean equal to one
+    method: cluster matching plus pseudo-target validation
+    absolute_MW_values_transferred: false
+
+  target_peak_anchor:
+    primary_source: Essential Energy UHC 2025 Secondary layer
+    variables:
+      - n_1_nameplate_capacity
+      - available_capacity_load_at_n_1
+      - year
+    derived_proxy: n_1_nameplate_capacity - available_capacity_load_at_n_1
+    source_type: derived_from_official_network_attributes
+    interpretation: >
+      A network-capacity-implied peak-demand proxy, not a published measured load. Negative available
+      capacity and zero N-1 nameplate values require explicit review and a wider uncertainty range.
+    time_horizon: 2025-2034
+    mandatory_checks:
+      - implied peak must be non-negative
+      - annual trend must be retained rather than using only one year
+      - proxy must be reported alongside the original capacity fields
+      - sites with zero N-1 nameplate must be flagged radial_or_nonfirm
+
+  annual_energy_anchor:
+    central_method: matched_archetype_load_factor_times_target_peak_proxy
+    independent_cross_checks:
+      - Australian Energy Statistics NSW sector electricity consumption
+      - ABS target-SA2 population, households and industry employment
+      - population within 25, 50 and 100 km
+      - network voltage and capacity attributes
+    rule: >
+      State-level or population-based estimates are plausibility bounds, not a direct service-area allocation,
+      because the public data do not define each substation's customer catchment.
+
+uncertainty:
+  peak:
+    sources:
+      - 2025-2034 UHC trajectory
+      - radial_or_nonfirm network status
+      - unknown service-area boundary
+      - transferred archetype peak-to-average distribution
+  annual_energy:
+    sources:
+      - archetype load-factor distribution
+      - target sector-mix uncertainty
+      - state-to-regional allocation uncertainty
+  profile_ensemble:
+    requirement: at least 100 annual profiles per target site before robust optimisation
+
+pseudo_target_validation:
+  design: >
+    Hide absolute demand for held-out Ausgrid substations, reconstruct their scale from source-available
+    network/population proxy features where possible, combine with transferred shapes, and compare with measured demand.
+  metrics:
+    - annual_energy_error
+    - peak_error
+    - NMAE
+    - NRMSE
+    - load_duration_curve_error
+    - peak_timing_error
+    - ramp_distribution_distance
+    - interval_coverage
+    - CRPS
+  baselines:
+    - state_average_load_factor
+    - nearest_archetype_without_covariate_matching
+    - seasonal_naive_shape
+
+release_gate:
+  rule: >
+    Target demand is not released for physics optimisation until pseudo-target performance, uncertainty coverage,
+    network-capacity consistency and AES/ABS plausibility checks pass and ChatGPT approves the report.
