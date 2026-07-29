@@ -1,0 +1,52 @@
+name: Download and audit NREL lifecycle emission factors
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/download_nrel_lifecycle_factors.py'
+      - '.github/workflows/download-nrel-lifecycle-factors.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  lifecycle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Record workflow attempt
+        run: |
+          mkdir -p model_ready_inputs/reference
+          cat > model_ready_inputs/reference/nrel_lifecycle_latest_attempt.json <<EOF
+          {"run_id": ${GITHUB_RUN_ID}, "run_attempt": ${GITHUB_RUN_ATTEMPT}, "commit_sha": "${GITHUB_SHA}"}
+          EOF
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add model_ready_inputs/reference/nrel_lifecycle_latest_attempt.json
+          git commit -m "Record NREL lifecycle download attempt" || true
+          git push
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: pip install pandas openpyxl requests
+      - name: Download and audit official workbook
+        run: python scripts/download_nrel_lifecycle_factors.py
+      - name: Upload lifecycle reference package
+        uses: actions/upload-artifact@v4
+        with:
+          name: nrel-lifecycle-emission-factors-v1
+          path: model_ready_inputs/reference
+          retention-days: 90
+      - name: Commit official workbook and audit
+        run: |
+          cat > model_ready_inputs/reference/nrel_lifecycle_latest_run.json <<EOF
+          {"run_id": ${GITHUB_RUN_ID}, "run_attempt": ${GITHUB_RUN_ATTEMPT}, "commit_sha": "${GITHUB_SHA}", "artifact": "nrel-lifecycle-emission-factors-v1"}
+          EOF
+          git pull --rebase
+          git add model_ready_inputs/reference
+          git commit -m "Store official NREL lifecycle emission factors" || exit 0
+          git push
