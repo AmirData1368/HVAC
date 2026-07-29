@@ -25,17 +25,13 @@ def aggregate_crop(directory: Path) -> pd.DataFrame:
             key = normalise_name(name)
             value = safe_float(row.get("TOTAL_RESIDUES"))
             if value == 0:
-                value = sum(
-                    safe_float(row[column])
-                    for column in frame.columns
-                    if column.endswith("_AVG_0_MC")
-                )
+                value = sum(safe_float(row[column]) for column in frame.columns if column.endswith("_AVG_0_MC"))
             totals[key] = totals.get(key, 0.0) + value
             names[key] = name
-    return pd.DataFrame(
-        {"region_key": list(totals), "source_region_name": [names[k] for k in totals],
-         "crop_dry_tpy": [totals[k] for k in totals]}
-    )
+    return pd.DataFrame({
+        "region_key": list(totals), "source_region_name": [names[key] for key in totals],
+        "crop_dry_tpy": [totals[key] for key in totals],
+    })
 
 
 def aggregate_livestock(directory: Path) -> pd.DataFrame:
@@ -53,19 +49,19 @@ def aggregate_livestock(directory: Path) -> pd.DataFrame:
             key = normalise_name(name)
             totals[key] = totals.get(key, 0.0) + safe_float(row.get(selected))
             names[key] = name
-    return pd.DataFrame(
-        {"region_key": list(totals), "source_region_name": [names[k] for k in totals],
-         "manure_vs_tpy": [totals[k] for k in totals]}
-    )
+    return pd.DataFrame({
+        "region_key": list(totals), "source_region_name": [names[key] for key in totals],
+        "manure_vs_tpy": [totals[key] for key in totals],
+    })
 
 
 def aggregate_waste(directory: Path) -> pd.DataFrame:
     frame = pd.read_csv(next(directory.glob("00_*attributes.csv")))
     output = frame[["REGION_NAME", "TOTAL_RESIDUES"]].copy()
     output["region_key"] = output.REGION_NAME.map(normalise_name)
-    return output.rename(
-        columns={"REGION_NAME": "source_region_name", "TOTAL_RESIDUES": "organic_waste_tpy"}
-    )[["region_key", "source_region_name", "organic_waste_tpy"]]
+    return output.rename(columns={
+        "REGION_NAME": "source_region_name", "TOTAL_RESIDUES": "organic_waste_tpy",
+    })[["region_key", "source_region_name", "organic_waste_tpy"]]
 
 
 def aggregate_forestry(directory: Path) -> pd.DataFrame:
@@ -86,17 +82,29 @@ def aggregate_forestry(directory: Path) -> pd.DataFrame:
                 value = sum(safe_float(row[column]) for column in components)
             totals[key] = totals.get(key, 0.0) + value
             names[key] = name
-    return pd.DataFrame(
-        {"region_key": list(totals), "source_region_name": [names[k] for k in totals],
-         "forestry_dry_tpy": [totals[k] for k in totals]}
-    )
+    return pd.DataFrame({
+        "region_key": list(totals), "source_region_name": [names[key] for key in totals],
+        "forestry_dry_tpy": [totals[key] for key in totals],
+    })
+
+
+def repair_geometry(frame: gpd.GeoDataFrame, label: str) -> gpd.GeoDataFrame:
+    repaired = frame.copy()
+    invalid_before = int((~repaired.geometry.is_valid).sum())
+    repaired.geometry = repaired.geometry.make_valid()
+    repaired = repaired[repaired.geometry.notna() & ~repaired.geometry.is_empty].copy()
+    invalid_after = int((~repaired.geometry.is_valid).sum())
+    if invalid_after:
+        raise RuntimeError(f"{label}: {invalid_after} geometries remain invalid after make_valid")
+    repaired.attrs["invalid_before_repair"] = invalid_before
+    return repaired
 
 
 def join_geometry_and_values(path: Path, values: Iterable[pd.DataFrame]) -> gpd.GeoDataFrame:
-    geometry = gpd.read_file(path)
+    geometry = repair_geometry(gpd.read_file(path), path.name)
     geometry["region_key"] = geometry.REGION_NAME.map(normalise_name)
     for frame in values:
-        value_columns = [c for c in frame if c not in {"region_key", "source_region_name"}]
+        value_columns = [column for column in frame if column not in {"region_key", "source_region_name"}]
         geometry = geometry.merge(frame[["region_key", *value_columns]], on="region_key", how="left")
     numeric = [column for column in geometry if column.endswith("_tpy")]
     geometry[numeric] = geometry[numeric].fillna(0.0)
@@ -111,11 +119,13 @@ def area_weighted_catchments(
 ) -> pd.DataFrame:
     crs = "EPSG:3577"
     sites = sites.to_crs(crs)
-    abs_sa2 = abs_sa2.to_crs(crs)
-    biomass_regions = biomass_regions.to_crs(crs)
-    forestry_regions = forestry_regions.to_crs(crs)
+    abs_sa2 = repair_geometry(abs_sa2.to_crs(crs), "ABS SA2")
+    biomass_regions = repair_geometry(biomass_regions.to_crs(crs), "biomass source regions")
+    forestry_regions = repair_geometry(forestry_regions.to_crs(crs), "forestry source regions")
     for frame in (abs_sa2, biomass_regions, forestry_regions):
         frame["polygon_area_m2"] = frame.geometry.area
+        if (frame.polygon_area_m2 <= 0).any():
+            raise RuntimeError("Source-region geometry includes zero-area polygons")
 
     rows = []
     for site in sites.itertuples(index=False):
@@ -129,7 +139,10 @@ def area_weighted_catchments(
                 subset = regions[regions.intersects(buffer)].copy()
                 if subset.empty:
                     values = {column: 0.0 for column in columns}
-                    weighted = {column.replace("_tpy", "_weighted_distance_km"): 0.0 for column in columns if column.endswith("_tpy")}
+                    weighted = {
+                        column.replace("_tpy", "_weighted_distance_km"): 0.0
+                        for column in columns if column.endswith("_tpy")
+                    }
                     return values, weighted, 0.0, 0
                 intersections = subset.geometry.intersection(buffer)
                 area = intersections.area
@@ -141,7 +154,10 @@ def area_weighted_catchments(
                     values[column] = float(allocated.sum())
                     if distances and column.endswith("_tpy"):
                         key = column.replace("_tpy", "_weighted_distance_km")
-                        weighted[key] = float((allocated * centroid_distance).sum() / allocated.sum()) if allocated.sum() > 0 else 0.0
+                        weighted[key] = (
+                            float((allocated * centroid_distance).sum() / allocated.sum())
+                            if allocated.sum() > 0 else 0.0
+                        )
                 return values, weighted, float(area.sum() / buffer_area), len(subset)
 
             population, _, pop_coverage, pop_count = allocate(abs_sa2, ["population_2021"])
@@ -151,7 +167,9 @@ def area_weighted_catchments(
             forestry, forest_distance, forest_coverage, forest_count = allocate(
                 forestry_regions, ["forestry_dry_tpy"], True
             )
-            for key, value in {**population, **biomass, **forestry, **bio_distance, **forest_distance}.items():
+            for key, value in {
+                **population, **biomass, **forestry, **bio_distance, **forest_distance,
+            }.items():
                 record[key + suffix] = value
             record["population_geometry_coverage" + suffix] = pop_coverage
             record["biomass_geometry_coverage" + suffix] = bio_coverage
