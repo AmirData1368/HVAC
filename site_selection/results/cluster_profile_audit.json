@@ -1,0 +1,33 @@
+{
+  "status": "PASS",
+  "cluster_count": 5,
+  "selected_site_count": 6,
+  "cluster_labels": [
+    {
+      "cluster": 0,
+      "machine_label": "wind_resource + population_and_demand_proxy",
+      "selected_representatives": "Suffolk Park"
+    },
+    {
+      "cluster": 1,
+      "machine_label": "crop_biomass + manure_resource",
+      "selected_representatives": "Narrandera; West Jemalong"
+    },
+    {
+      "cluster": 2,
+      "machine_label": "forestry_resource + population_and_demand_proxy",
+      "selected_representatives": "Bombala"
+    },
+    {
+      "cluster": 3,
+      "machine_label": "solar_resource + hot_climate",
+      "selected_representatives": "Merrywinebone"
+    },
+    {
+      "cluster": 4,
+      "machine_label": "forestry_resource + population_and_demand_proxy",
+      "selected_representatives": "Hallidays Point 11kV"
+    }
+  ],
+  "label_warning": "Machine labels are relative screening descriptors derived from cluster percentile ranks. They are not causal claims and require ChatGPT approval before manuscript use."
+}
