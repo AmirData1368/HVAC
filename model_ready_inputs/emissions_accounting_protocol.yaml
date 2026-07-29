@@ -1,0 +1,70 @@
+version: 1.0.0
+purpose: >
+  Prevent double counting when Australian operational emission factors and NREL attributional
+  lifecycle factors are used in the same microgrid study.
+
+accounting_cases:
+  operational_boundary:
+    label: system-boundary greenhouse-gas emissions
+    include:
+      - DCCEEW diesel combustion and upstream fuel factors
+      - DCCEEW biomass non-CO2 combustion factors
+      - biomass transport emissions
+      - replacement-related operational fuel use
+    exclude:
+      - generic NREL total-lifecycle technology factors
+      - avoided landfill credits unless explicitly enabled
+    role: principal optimisation objective until all lifecycle boundaries are reconciled
+
+  attributional_lifecycle_sensitivity:
+    label: attributional lifecycle greenhouse-gas sensitivity
+    include:
+      - NREL total-lifecycle factor for photovoltaic electricity generated
+      - NREL total-lifecycle factor for wind electricity generated
+      - NREL Li-ion battery-storage factor applied to discharged electricity
+      - one selected NREL biopower pathway factor applied to bioelectricity generated
+      - DCCEEW diesel factors for the diesel comparator only
+    exclude:
+      - overlapping DCCEEW biomass combustion factors when an NREL total-lifecycle biopower factor is used
+      - avoided landfill credits
+    role: separate sensitivity result, not added to the operational-boundary objective
+
+  consequential_waste_diversion:
+    label: consequential waste-diversion scenario
+    include:
+      - operational-boundary emissions
+      - avoided landfill emissions for eligible waste streams
+    exclude:
+      - generic attributional biopower credit already embedded in another factor
+    role: separately reported policy scenario
+
+factor_selection:
+  photovoltaic:
+    central: median_g_co2e_per_kwh
+    low: q1_g_co2e_per_kwh
+    high: q3_g_co2e_per_kwh
+    extreme_bounds: [min_g_co2e_per_kwh, max_g_co2e_per_kwh]
+  wind:
+    central: median_g_co2e_per_kwh
+    low: q1_g_co2e_per_kwh
+    high: q3_g_co2e_per_kwh
+    extreme_bounds: [min_g_co2e_per_kwh, max_g_co2e_per_kwh]
+  battery_lithium_ion:
+    central: median_g_co2e_per_kwh
+    low: q1_g_co2e_per_kwh
+    high: q3_g_co2e_per_kwh
+    application: discharged_electricity_only
+    note: Source factor is per kWh and is not a capacity-manufacturing factor; report this limitation.
+  biopower:
+    pathway_rule: select exactly one of direct_combustion, gasification, or gasification_engine
+    central: median_g_co2e_per_kwh
+    low: q1_g_co2e_per_kwh
+    high: q3_g_co2e_per_kwh
+    note: The very wide biopower range reflects pathway and system-boundary heterogeneity; never pool pathways silently.
+
+mandatory_checks:
+  - no energy flow may receive both an NREL total-lifecycle factor and an overlapping DCCEEW combustion factor
+  - battery lifecycle factor is applied only to discharged electricity, not simultaneously to installed capacity
+  - all factors use generated or discharged electricity consistently with their functional units
+  - avoided-landfill credits are shown separately and never allowed to obscure gross emissions
+  - operational and attributional lifecycle results appear in separate tables and figures
