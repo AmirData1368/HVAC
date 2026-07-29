@@ -1,0 +1,92 @@
+name: Run validated regional NSW site selection
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'site_selection/geometry/*.geojson'
+      - 'scripts/screen_candidate_sites.py'
+      - 'scripts/site_screen_*.py'
+      - 'requirements-site-selection.txt'
+      - '.github/workflows/run-site-selection.yml'
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  screen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      SOURCE_RUN_ID: '30434262791'
+      SOURCE_ARTIFACT: 'regional-nsw-microgrid-data-bundle-v6'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check validated geometry is available
+        id: geometry
+        run: |
+          if [[ -f site_selection/geometry/nsw_biomass_merged_sa2_regions.geojson && -f site_selection/geometry/nsw_forestry_management_areas.geojson ]]; then
+            echo 'available=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'available=false' >> "$GITHUB_OUTPUT"
+            echo 'Validated geometry is not committed yet; this run is intentionally skipped.'
+          fi
+      - uses: actions/setup-python@v5
+        if: steps.geometry.outputs.available == 'true'
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: requirements-site-selection.txt
+      - name: Install screening dependencies
+        if: steps.geometry.outputs.available == 'true'
+        run: pip install -r requirements-site-selection.txt
+      - name: Download the previously validated v6 data bundle
+        if: steps.geometry.outputs.available == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p source_artifact
+          gh run download "$SOURCE_RUN_ID" --repo "$GITHUB_REPOSITORY" \
+            --name "$SOURCE_ARTIFACT" --dir source_artifact
+          cd source_artifact
+          sha256sum -c regional_nsw_microgrid_data_bundle_v6.tar.gz.sha256
+          mkdir -p ../validated_bundle
+          tar -xzf regional_nsw_microgrid_data_bundle_v6.tar.gz -C ../validated_bundle
+      - name: Screen candidate sites and enforce validation gates
+        if: steps.geometry.outputs.available == 'true'
+        run: |
+          rm -rf site_selection/results
+          python scripts/screen_candidate_sites.py \
+            --bundle-root validated_bundle/bundle_v6 \
+            --geometry-dir site_selection/geometry \
+            --output-dir site_selection/results
+      - name: Upload site-selection result package
+        if: steps.geometry.outputs.available == 'true' && success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: regional-nsw-site-selection-v1
+          path: |
+            site_selection/SITE_SELECTION_PROTOCOL.md
+            site_selection/geometry/geometry_validation.json
+            site_selection/results
+          retention-days: 90
+      - name: Commit validated compact results
+        if: steps.geometry.outputs.available == 'true' && success()
+        run: |
+          cat > site_selection/results/latest_run.json <<EOF
+          {
+            "run_id": ${GITHUB_RUN_ID},
+            "run_attempt": ${GITHUB_RUN_ATTEMPT},
+            "commit_sha": "${GITHUB_SHA}",
+            "source_data_run_id": ${SOURCE_RUN_ID},
+            "artifact": "regional-nsw-site-selection-v1"
+          }
+          EOF
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git pull --rebase
+          git add site_selection/results
+          git commit -m "Store validated regional NSW site-selection results" || exit 0
+          git push
