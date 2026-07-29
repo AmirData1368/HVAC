@@ -1,0 +1,47 @@
+name: Parse official NREL lifecycle factors
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/parse_nrel_lifecycle_factors.py'
+      - 'model_ready_inputs/reference/NREL_EF_Table_FINAL.xlsx'
+      - '.github/workflows/parse-nrel-lifecycle-factors.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  parse:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install parsing dependencies
+        run: pip install pandas openpyxl numpy
+      - name: Parse and audit lifecycle factors
+        run: python scripts/parse_nrel_lifecycle_factors.py
+      - name: Upload parsed lifecycle package
+        uses: actions/upload-artifact@v4
+        with:
+          name: nrel-model-ready-lifecycle-factors-v1
+          path: |
+            model_ready_inputs/technology_lifecycle_emissions.csv
+            model_ready_inputs/technology_lifecycle_emissions_all_nrel.csv
+            model_ready_inputs/technology_lifecycle_emissions_audit.json
+          retention-days: 90
+      - name: Commit parsed tables and run metadata
+        run: |
+          cat > model_ready_inputs/reference/nrel_lifecycle_parse_latest_run.json <<EOF
+          {"run_id": ${GITHUB_RUN_ID}, "run_attempt": ${GITHUB_RUN_ATTEMPT}, "commit_sha": "${GITHUB_SHA}", "artifact": "nrel-model-ready-lifecycle-factors-v1"}
+          EOF
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git pull --rebase
+          git add model_ready_inputs/technology_lifecycle_emissions*.csv model_ready_inputs/technology_lifecycle_emissions_audit.json model_ready_inputs/reference/nrel_lifecycle_parse_latest_run.json
+          git commit -m "Store parsed NREL lifecycle emission factors" || exit 0
+          git push
