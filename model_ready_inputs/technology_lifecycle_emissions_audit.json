@@ -1,0 +1,47 @@
+{
+  "status": "PASS",
+  "workbook": "model_ready_inputs/reference/NREL_EF_Table_FINAL.xlsx",
+  "workbook_shape": [
+    61,
+    31
+  ],
+  "parsed_technology_rows": 55,
+  "selected_rows": 7,
+  "selected_technologies": [
+    {
+      "model_key": "solar_photovoltaic",
+      "technology": "Photovoltaic (All Technologies)"
+    },
+    {
+      "model_key": "solar_photovoltaic_crystalline",
+      "technology": "Photovoltaic - Crystalline Silicon (All Technologies)"
+    },
+    {
+      "model_key": "wind",
+      "technology": "Wind (All Technologies)"
+    },
+    {
+      "model_key": "battery_lithium_ion",
+      "technology": "Li-Ion Battery Storage"
+    },
+    {
+      "model_key": "biopower_direct_combustion",
+      "technology": "Direct Combustion"
+    },
+    {
+      "model_key": "biopower_gasification",
+      "technology": "Gasification"
+    },
+    {
+      "model_key": "biopower_gasification_engine",
+      "technology": "Gasification Engine"
+    }
+  ],
+  "missing_optional_patterns": [
+    {
+      "model_key": "wind_land_based",
+      "pattern": "^(Land[- ]based Wind|Onshore Wind)$"
+    }
+  ],
+  "double_counting_rule": "NREL total-lifecycle factors are a separate attributional accounting scenario. They must not be added to overlapping DCCEEW operational fuel factors without an explicit non-overlapping boundary reconciliation."
+}
