@@ -1,0 +1,98 @@
+{
+  "status": "PASS",
+  "best_k": 5,
+  "scenario_count": 9,
+  "checks": [
+    {
+      "check": "central_reproduction",
+      "passed": true
+    },
+    {
+      "check": "median_partition_stability",
+      "passed": true,
+      "value": 0.7793266758100463
+    },
+    {
+      "check": "minimum_partition_stability",
+      "passed": true,
+      "value": 0.584717607973422
+    },
+    {
+      "check": "central_shortlist_frequency",
+      "passed": true,
+      "value": 0.8333333333333333
+    }
+  ],
+  "scenario_selected_sites": {
+    "central_repeated": [
+      "Narrandera",
+      "West Jemalong",
+      "Merrywinebone",
+      "Bombala",
+      "Hallidays Point 11kV",
+      "Suffolk Park"
+    ],
+    "catchment_25km": [
+      "Narrandera",
+      "Merrywinebone",
+      "Bombala",
+      "Hallidays Point 11kV",
+      "Suffolk Park"
+    ],
+    "catchment_100km": [
+      "TransGrid 220/22kV Total Broken Hill 22kV Supply",
+      "Narrandera",
+      "Merrywinebone",
+      "Bombala",
+      "Hallidays Point 11kV"
+    ],
+    "standard_scaler": [
+      "Narrandera",
+      "West Jemalong",
+      "Jindabyne 11kV",
+      "Merrywinebone",
+      "Hallidays Point 11kV",
+      "Redcliff"
+    ],
+    "leave_out_solar": [
+      "Narrandera",
+      "Merrywinebone",
+      "Madgwick Dr",
+      "Hallidays Point 11kV",
+      "Suffolk Park"
+    ],
+    "leave_out_wind": [
+      "TransGrid 220/22kV Total Broken Hill 22kV Supply",
+      "Narrandera",
+      "West Jemalong",
+      "Merrywinebone",
+      "Bombala",
+      "Hallidays Point 11kV",
+      "Raleigh"
+    ],
+    "leave_out_temperature": [
+      "Narrandera",
+      "Merrywinebone",
+      "Bombala",
+      "Hallidays Point 11kV",
+      "Telegraph Point",
+      "Redcliff"
+    ],
+    "leave_out_biomass": [
+      "Narrandera",
+      "Merrywinebone",
+      "Bombala",
+      "Hallidays Point 11kV",
+      "Suffolk Park"
+    ],
+    "leave_out_population": [
+      "Narrandera",
+      "West Jemalong",
+      "Merrywinebone",
+      "Madgwick Dr",
+      "Hallidays Point 11kV",
+      "Suffolk Park"
+    ]
+  },
+  "interpretation": "ARI quantifies partition stability, while site-selection frequency tests whether individual representatives remain preferred. Low stability does not justify hiding alternatives; it requires a broader or explicitly conditional detailed-study shortlist."
+}

@@ -1,0 +1,21 @@
+site_name,selection_count,selection_frequency,cluster,selected_for_detailed_study,selection_reason
+Narrandera,9,1.0,1,True,resource_extreme
+Merrywinebone,9,1.0,3,True,cluster_medoid
+Hallidays Point 11kV,9,1.0,4,True,cluster_medoid;resilience_challenge
+Bombala,6,0.6666666666666666,2,True,cluster_medoid
+Suffolk Park,5,0.5555555555555556,0,True,cluster_medoid
+West Jemalong,4,0.4444444444444444,1,True,cluster_medoid
+TransGrid 220/22kV Total Broken Hill 22kV Supply,2,0.2222222222222222,3,False,
+Madgwick Dr,2,0.2222222222222222,2,False,
+Redcliff,2,0.2222222222222222,4,False,
+Jindabyne 11kV,1,0.1111111111111111,2,False,
+Telegraph Point,1,0.1111111111111111,4,False,
+Raleigh,1,0.1111111111111111,4,False,
+Ivanhoe,0,0.0,3,False,
+Ringwood Road,0,0.0,1,False,
+Ariah Park,0,0.0,1,False,
+Narromine,0,0.0,1,False,
+Wathagar,0,0.0,3,False,
+Pambula,0,0.0,4,False,
+Goondiwindi 33kV,0,0.0,3,False,
+Oxley Vale,0,0.0,1,False,
