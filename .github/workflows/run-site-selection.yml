@@ -24,6 +24,23 @@ jobs:
       SOURCE_ARTIFACT: 'regional-nsw-microgrid-data-bundle-v6'
     steps:
       - uses: actions/checkout@v4
+      - name: Record site-selection workflow attempt
+        run: |
+          mkdir -p site_selection/results
+          cat > site_selection/results/latest_attempt.json <<EOF
+          {
+            "run_id": ${GITHUB_RUN_ID},
+            "run_attempt": ${GITHUB_RUN_ATTEMPT},
+            "commit_sha": "${GITHUB_SHA}",
+            "source_data_run_id": ${SOURCE_RUN_ID},
+            "artifact": "regional-nsw-site-selection-v1"
+          }
+          EOF
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add site_selection/results/latest_attempt.json
+          git commit -m "Record regional site-selection workflow attempt" || true
+          git push
       - name: Check validated geometry is available
         id: geometry
         run: |
@@ -57,7 +74,7 @@ jobs:
       - name: Screen candidate sites and enforce validation gates
         if: steps.geometry.outputs.available == 'true'
         run: |
-          rm -rf site_selection/results
+          find site_selection/results -type f ! -name latest_attempt.json -delete
           python scripts/screen_candidate_sites.py \
             --bundle-root validated_bundle/bundle_v6 \
             --geometry-dir site_selection/geometry \
@@ -84,8 +101,6 @@ jobs:
             "artifact": "regional-nsw-site-selection-v1"
           }
           EOF
-          git config user.name github-actions[bot]
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           git pull --rebase
           git add site_selection/results
           git commit -m "Store validated regional NSW site-selection results" || exit 0
