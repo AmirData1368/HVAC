@@ -1,0 +1,15 @@
+scenario_id,category,duration_hours,critical_load_fraction,load_multiplier,solar_availability_multiplier,wind_availability_multiplier,biomass_availability_multiplier,battery_power_availability,generator_availability,source_type,method_source,notes
+OUTAGE_24H_CL50,grid_outage,24,0.5,1.0,1.0,1.0,1.0,1.0,1.0,scenario_assumption,NREL REopt resilience methodology,Start time sampled across year; report survival probability and EENS; mandatory stress-test scenario
+OUTAGE_24H_CL75,grid_outage,24,0.75,1.0,1.0,1.0,1.0,1.0,1.0,scenario_assumption,NREL REopt resilience methodology,Start time sampled across year; report survival probability and EENS; mandatory stress-test scenario
+OUTAGE_24H_CL100,grid_outage,24,1.0,1.0,1.0,1.0,1.0,1.0,1.0,scenario_assumption,NREL REopt resilience methodology,Start time sampled across year; report survival probability and EENS; mandatory stress-test scenario
+OUTAGE_72H_CL50,grid_outage,72,0.5,1.0,1.0,1.0,1.0,1.0,1.0,scenario_assumption,NREL REopt resilience methodology,Start time sampled across year; report survival probability and EENS; mandatory stress-test scenario
+OUTAGE_72H_CL75,grid_outage,72,0.75,1.0,1.0,1.0,1.0,1.0,1.0,scenario_assumption,NREL REopt resilience methodology,Start time sampled across year; report survival probability and EENS; mandatory stress-test scenario
+OUTAGE_72H_CL100,grid_outage,72,1.0,1.0,1.0,1.0,1.0,1.0,1.0,scenario_assumption,NREL REopt resilience methodology,Start time sampled across year; report survival probability and EENS; mandatory stress-test scenario
+OUTAGE_168H_CL50,grid_outage,168,0.5,1.0,1.0,1.0,1.0,1.0,1.0,scenario_assumption,NREL REopt resilience methodology,Start time sampled across year; report survival probability and EENS; mandatory stress-test scenario
+OUTAGE_168H_CL75,grid_outage,168,0.75,1.0,1.0,1.0,1.0,1.0,1.0,scenario_assumption,NREL REopt resilience methodology,Start time sampled across year; report survival probability and EENS; mandatory stress-test scenario
+OUTAGE_168H_CL100,grid_outage,168,1.0,1.0,1.0,1.0,1.0,1.0,1.0,scenario_assumption,NREL REopt resilience methodology,Start time sampled across year; report survival probability and EENS; mandatory stress-test scenario
+COMPOUND_HEAT_LOW_WIND_72H,compound_weather,72,0.75,1.25,0.85,0.4,1.0,1.0,1.0,scenario_assumption,Stress-test design,Heatwave load uplift with low wind; preserve actual solar temperature derating in physics model
+RENEWABLE_DROUGHT_168H,compound_weather,168,0.75,1.0,0.5,0.3,1.0,1.0,1.0,scenario_assumption,Stress-test design,Multi-day low solar and wind event
+BATTERY_DERATING_72H,component_derating,72,0.75,1.0,1.0,1.0,1.0,0.6,1.0,scenario_assumption,Stress-test design,Battery power limited to 60%; energy capacity degradation remains separately modelled
+BIOMASS_SUPPLY_DISRUPTION_168H,supply_disruption,168,0.75,1.0,1.0,1.0,0.5,1.0,1.0,scenario_assumption,Stress-test design,Feedstock inflow reduced; existing stored inventory remains usable
+GENERATOR_FORCED_OUTAGE_72H,component_failure,72,0.75,1.0,1.0,1.0,1.0,1.0,0.0,scenario_assumption,N-1 resilience stress test,Full biomass-generator outage
