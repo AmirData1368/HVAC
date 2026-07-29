@@ -1,0 +1,15 @@
+check,passed,value,detail
+measured_nsw_load_archives,True,11,2163 real zone-substation CSV files; 11 official annual links discovered
+essential_energy_uhc_2025,True,3,3/3 selected layers complete
+biomass_livestock,True,3,3/3 attribute layers complete; ABS SA2 geometry supplied separately
+biomass_cropping,True,19,19/19 attribute layers complete; ABS SA2 geometry supplied separately
+biomass_forestry,True,7,7/7 attribute layers complete; ABS SA2 geometry supplied separately
+biomass_organic_waste,True,4,4/4 attribute layers complete; ABS SA2 geometry supplied separately
+candidate_sites,True,20,Derived only from complete live GIS data; no hard-coded fallback
+nasa_power_complete_sites,True,20,20 sites requested for 2015-2025
+component_databases,True,4,"PV modules, inverters and wind-turbine power curves"
+ABS regional population SA2,True,1,bundle_v6/raw/demographics/abs_population/32180DS0003_2001-25.xlsx
+ABS 2021 SA2 boundaries,True,1,bundle_v6/raw/demographics/abs_boundaries/SA2_2021_AUST_SHP_GDA2020.zip
+ABS 2021 Census NSW SA2 DataPack,True,1,bundle_v6/raw/demographics/abs_census/2021_GCP_SA2_for_NSW_short-header.zip
+DCCEEW 2025 model-ready emission factors,True,1,Official values with table/page/unit provenance; raw public links retained
+CSIRO GenCost,True,5,minimum required=1
