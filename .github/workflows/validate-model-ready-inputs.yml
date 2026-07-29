@@ -60,7 +60,7 @@ jobs:
           cat > model_ready_validation/latest_run.json <<EOF
           {"run_id": ${GITHUB_RUN_ID}, "run_attempt": ${GITHUB_RUN_ATTEMPT}, "commit_sha": "${GITHUB_SHA}", "package_artifact": "regional-nsw-model-ready-scientific-inputs-v1", "diagnostic_artifact": "regional-nsw-model-ready-input-validation"}
           EOF
-          git pull --rebase
           git add model_ready_validation/latest_run.json model_ready_validation/model_ready_input_validation.json model_ready_validation/fuel_logistics_validation.json
           git commit -m "Store latest model-ready scientific input validation reports" || exit 0
+          git pull --rebase
           git push
