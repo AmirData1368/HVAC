@@ -132,10 +132,15 @@ def area_weighted_catchments(
         record = {"site_name": site.site_name}
         for radius in CATCHMENT_RADII_KM:
             buffer = site.geometry.buffer(radius * 1000.0)
-            buffer_area = buffer.area
+            buffer_area = float(buffer.area)
             suffix = f"_{radius}km"
 
-            def allocate(regions: gpd.GeoDataFrame, columns: list[str], distances: bool = False):
+            def allocate(
+                regions: gpd.GeoDataFrame,
+                columns: list[str],
+                distances: bool = False,
+                coverage_denominator: float | None = None,
+            ):
                 subset = regions[regions.intersects(buffer)].copy()
                 if subset.empty:
                     values = {column: 0.0 for column in columns}
@@ -143,14 +148,14 @@ def area_weighted_catchments(
                         column.replace("_tpy", "_weighted_distance_km"): 0.0
                         for column in columns if column.endswith("_tpy")
                     }
-                    return values, weighted, 0.0, 0
+                    return values, weighted, 0.0, 0, 0.0
                 intersections = subset.geometry.intersection(buffer)
-                area = intersections.area
-                fraction = (area / subset.polygon_area_m2).clip(0.0, 1.0)
+                intersection_area = intersections.area
+                source_fraction = (intersection_area / subset.polygon_area_m2).clip(0.0, 1.0)
                 values, weighted = {}, {}
                 centroid_distance = intersections.centroid.distance(site.geometry) / 1000.0
                 for column in columns:
-                    allocated = subset[column].fillna(0.0) * fraction
+                    allocated = subset[column].fillna(0.0) * source_fraction
                     values[column] = float(allocated.sum())
                     if distances and column.endswith("_tpy"):
                         key = column.replace("_tpy", "_weighted_distance_km")
@@ -158,22 +163,34 @@ def area_weighted_catchments(
                             float((allocated * centroid_distance).sum() / allocated.sum())
                             if allocated.sum() > 0 else 0.0
                         )
-                return values, weighted, float(area.sum() / buffer_area), len(subset)
+                total_intersection_area = float(intersection_area.sum())
+                denominator = coverage_denominator if coverage_denominator and coverage_denominator > 0 else buffer_area
+                coverage = min(1.0, total_intersection_area / denominator)
+                return values, weighted, coverage, len(subset), total_intersection_area
 
-            population, _, pop_coverage, pop_count = allocate(abs_sa2, ["population_2021"])
-            biomass, bio_distance, bio_coverage, bio_count = allocate(
-                biomass_regions, ["crop_dry_tpy", "manure_vs_tpy", "organic_waste_tpy"], True
+            population, _, nsw_land_fraction, pop_count, nsw_land_area = allocate(
+                abs_sa2, ["population_2021"], coverage_denominator=buffer_area
             )
-            forestry, forest_distance, forest_coverage, forest_count = allocate(
-                forestry_regions, ["forestry_dry_tpy"], True
+            biomass, bio_distance, bio_coverage, bio_count, _ = allocate(
+                biomass_regions,
+                ["crop_dry_tpy", "manure_vs_tpy", "organic_waste_tpy"],
+                True,
+                coverage_denominator=nsw_land_area,
+            )
+            forestry, forest_distance, forest_coverage, forest_count, _ = allocate(
+                forestry_regions,
+                ["forestry_dry_tpy"],
+                True,
+                coverage_denominator=nsw_land_area,
             )
             for key, value in {
                 **population, **biomass, **forestry, **bio_distance, **forest_distance,
             }.items():
                 record[key + suffix] = value
-            record["population_geometry_coverage" + suffix] = pop_coverage
-            record["biomass_geometry_coverage" + suffix] = bio_coverage
-            record["forestry_geometry_coverage" + suffix] = forest_coverage
+            record["nsw_land_fraction_of_buffer" + suffix] = nsw_land_fraction
+            record["population_geometry_coverage" + suffix] = 1.0 if nsw_land_area > 0 else 0.0
+            record["biomass_geometry_coverage_of_nsw_land" + suffix] = bio_coverage
+            record["forestry_management_area_fraction_of_nsw_land" + suffix] = forest_coverage
             record["population_regions_intersected" + suffix] = pop_count
             record["biomass_regions_intersected" + suffix] = bio_count
             record["forestry_regions_intersected" + suffix] = forest_count
