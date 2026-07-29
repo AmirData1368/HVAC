@@ -1,0 +1,103 @@
+name: Split v6 bundle for assistant access
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/split-v6-artifact.yml'
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  split:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      SOURCE_RUN_ID: '30434262791'
+      SOURCE_ARTIFACT: 'regional-nsw-microgrid-data-bundle-v6'
+    steps:
+      - name: Download validated v6 artifact from existing successful run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p source_artifact
+          gh run download "$SOURCE_RUN_ID" \
+            --repo "$GITHUB_REPOSITORY" \
+            --name "$SOURCE_ARTIFACT" \
+            --dir source_artifact
+          find source_artifact -maxdepth 2 -type f -printf '%p %s bytes\n'
+
+      - name: Verify original bundle checksum
+        run: |
+          cd source_artifact
+          sha256sum -c regional_nsw_microgrid_data_bundle_v6.tar.gz.sha256
+
+      - name: Split into four assistant-accessible chunks
+        run: |
+          mkdir -p chunks
+          split -b 150M -d -a 2 \
+            source_artifact/regional_nsw_microgrid_data_bundle_v6.tar.gz \
+            chunks/regional_nsw_microgrid_data_bundle_v6.tar.gz.part-
+          test -f chunks/regional_nsw_microgrid_data_bundle_v6.tar.gz.part-00
+          test -f chunks/regional_nsw_microgrid_data_bundle_v6.tar.gz.part-01
+          test -f chunks/regional_nsw_microgrid_data_bundle_v6.tar.gz.part-02
+          test -f chunks/regional_nsw_microgrid_data_bundle_v6.tar.gz.part-03
+          sha256sum chunks/* > chunks/chunk_sha256.txt
+          cp source_artifact/regional_nsw_microgrid_data_bundle_v6.tar.gz.sha256 chunks/original_bundle_sha256.txt
+          cat > chunks/REASSEMBLE.txt <<'EOF'
+          Linux/macOS:
+          cat regional_nsw_microgrid_data_bundle_v6.tar.gz.part-* > regional_nsw_microgrid_data_bundle_v6.tar.gz
+          sha256sum -c original_bundle_sha256.txt
+
+          Windows PowerShell:
+          $parts = Get-ChildItem regional_nsw_microgrid_data_bundle_v6.tar.gz.part-* | Sort-Object Name
+          $out = [System.IO.File]::Create('regional_nsw_microgrid_data_bundle_v6.tar.gz')
+          foreach ($part in $parts) { $bytes = [System.IO.File]::ReadAllBytes($part.FullName); $out.Write($bytes,0,$bytes.Length) }
+          $out.Close()
+          EOF
+          ls -lh chunks
+
+      - name: Upload chunk 00
+        uses: actions/upload-artifact@v4
+        with:
+          name: regional-nsw-v6-part-00
+          path: chunks/regional_nsw_microgrid_data_bundle_v6.tar.gz.part-00
+          compression-level: 0
+          retention-days: 30
+
+      - name: Upload chunk 01
+        uses: actions/upload-artifact@v4
+        with:
+          name: regional-nsw-v6-part-01
+          path: chunks/regional_nsw_microgrid_data_bundle_v6.tar.gz.part-01
+          compression-level: 0
+          retention-days: 30
+
+      - name: Upload chunk 02
+        uses: actions/upload-artifact@v4
+        with:
+          name: regional-nsw-v6-part-02
+          path: chunks/regional_nsw_microgrid_data_bundle_v6.tar.gz.part-02
+          compression-level: 0
+          retention-days: 30
+
+      - name: Upload chunk 03
+        uses: actions/upload-artifact@v4
+        with:
+          name: regional-nsw-v6-part-03
+          path: chunks/regional_nsw_microgrid_data_bundle_v6.tar.gz.part-03
+          compression-level: 0
+          retention-days: 30
+
+      - name: Upload reconstruction metadata
+        uses: actions/upload-artifact@v4
+        with:
+          name: regional-nsw-v6-reassembly-info
+          path: |
+            chunks/chunk_sha256.txt
+            chunks/original_bundle_sha256.txt
+            chunks/REASSEMBLE.txt
+          retention-days: 30
