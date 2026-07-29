@@ -1,10 +1,11 @@
-name: Build regional NSW microgrid data bundle v2
+name: Build regional NSW microgrid data bundle v3
 
 on:
   workflow_dispatch:
   push:
     branches: [main]
     paths:
+      - 'scripts/build_data_bundle_v3.py'
       - 'scripts/build_data_bundle_v2.py'
       - 'requirements.txt'
       - '.github/workflows/build-data-bundle.yml'
@@ -16,12 +17,12 @@ env:
   START_YEAR: '2015'
   END_YEAR: '2025'
   SITE_LIMIT: '20'
-  BUNDLE_ROOT: 'bundle_v2'
+  BUNDLE_ROOT: 'bundle_v3'
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 330
+    timeout-minutes: 360
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -34,30 +35,30 @@ jobs:
           playwright install --with-deps chromium
       - name: Download, validate and audit official datasets
         id: build_data
-        run: python scripts/build_data_bundle_v2.py
+        run: python scripts/build_data_bundle_v3.py
       - name: Compress validated bundle
         if: success()
         run: |
-          tar -czf regional_nsw_microgrid_data_bundle_v2.tar.gz bundle_v2
-          sha256sum regional_nsw_microgrid_data_bundle_v2.tar.gz > regional_nsw_microgrid_data_bundle_v2.tar.gz.sha256
+          tar -czf regional_nsw_microgrid_data_bundle_v3.tar.gz bundle_v3
+          sha256sum regional_nsw_microgrid_data_bundle_v3.tar.gz > regional_nsw_microgrid_data_bundle_v3.tar.gz.sha256
       - name: Upload validated bundle artifact
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: regional-nsw-microgrid-data-bundle-v2
+          name: regional-nsw-microgrid-data-bundle-v3
           path: |
-            regional_nsw_microgrid_data_bundle_v2.tar.gz
-            regional_nsw_microgrid_data_bundle_v2.tar.gz.sha256
+            regional_nsw_microgrid_data_bundle_v3.tar.gz
+            regional_nsw_microgrid_data_bundle_v3.tar.gz.sha256
           compression-level: 0
           retention-days: 30
       - name: Upload audit and failure diagnostics
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: regional-nsw-data-audit-v2
+          name: regional-nsw-data-audit-v3
           path: |
-            bundle_v2/README.md
-            bundle_v2/metadata
-            bundle_v2/logs
+            bundle_v3/README.md
+            bundle_v3/metadata
+            bundle_v3/logs
           if-no-files-found: warn
           retention-days: 30
