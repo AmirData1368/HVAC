@@ -1,0 +1,42 @@
+{
+  "status": "PASS",
+  "checks": [
+    {
+      "check": "raw_file_count",
+      "passed": true,
+      "value": 2163
+    },
+    {
+      "check": "parse_success_fraction",
+      "passed": true,
+      "value": 1.0
+    },
+    {
+      "check": "eligible_station_years",
+      "passed": true,
+      "value": 1748
+    },
+    {
+      "check": "continuous_source_stations",
+      "passed": true,
+      "value": 180
+    },
+    {
+      "check": "daily_records",
+      "passed": true,
+      "value": 788258
+    }
+  ],
+  "raw_file_count": 2163,
+  "parsed_file_count": 2163,
+  "daily_record_count": 788258,
+  "shape_record_count": 684663,
+  "station_year_count": 2163,
+  "station_count": 223,
+  "eligible_station_year_count": 1748,
+  "scientific_limitations": [
+    "Ausgrid identifies occasional metering errors, data gaps, switching spikes and estimates based on assumed power factor.",
+    "Absolute Ausgrid megawatt values are source-domain measurements and must not be transferred directly to Essential Energy target sites.",
+    "The fixed 96-column daily format does not uniquely resolve daylight-saving transition intervals for UTC conversion; raw local clock labels are preserved."
+  ]
+}
