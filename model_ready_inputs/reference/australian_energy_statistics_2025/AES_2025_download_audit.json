@@ -1,0 +1,55 @@
+{
+  "status": "PASS",
+  "gate_name": "Australian Energy Statistics 2025 official plausibility anchor",
+  "access_mode": "official_energy_gov_au_web_publication_fallback",
+  "publication": {
+    "publisher": "Department of Climate Change, Energy, the Environment and Water",
+    "publication_page": "https://www.energy.gov.au/publications/australian-energy-update-2025",
+    "state_statistics_page": "https://www.energy.gov.au/energy-data/australian-energy-statistics/states-and-territories",
+    "state_infographic_page": "https://www.energy.gov.au/publications/australian-energy-statistics-state-and-territory",
+    "latest_data_period": "2023-24",
+    "publication_date": "2025-08-22"
+  },
+  "official_nsw_plausibility_anchors": {
+    "total_energy_consumption_2023_24_pj": 1447.9,
+    "share_of_australian_energy_consumption_percent": 24.2,
+    "annual_growth_2023_24_percent": -0.4,
+    "ten_year_average_annual_growth_percent": -0.5,
+    "per_capita_energy_consumption_gj_per_person": 162.0
+  },
+  "supplementary_official_2025_electricity_generation_mix_percent": {
+    "source_page": "https://www.energy.gov.au/energy-data/australian-energy-statistics/data-charts/australian-electricity-generation-fuel-mix-calendar-year-2025",
+    "coal": 55.2,
+    "natural_gas": 3.3,
+    "oil": 0.7,
+    "hydro": 3.5,
+    "other_renewables": 37.2
+  },
+  "individual_xlsx_access": {
+    "status": "UNAVAILABLE_FROM_GITHUB_ACTIONS_RUNNER",
+    "failed_run_id": 30610015784,
+    "reason": "energy.gov.au attachment reads timed out from the hosted GitHub Actions network even with bounded retries",
+    "scientific_response": "Do not fabricate downloaded workbooks. Use the official public HTML values only as independent state-level plausibility context and retain Essential Energy attributes as the target peak-scale source."
+  },
+  "scientific_use": {
+    "allowed": [
+      "state-level plausibility context",
+      "checking that transferred regional demand magnitudes do not imply implausible NSW-wide energy totals",
+      "documenting the official 2023-24 NSW energy context"
+    ],
+    "prohibited": [
+      "claiming that the six target-site loads are measured by DCCEEW",
+      "claiming that Table B, F or L workbooks were downloaded in the successful gate",
+      "using state totals as direct local load measurements"
+    ]
+  },
+  "checks": {
+    "official_government_publisher": true,
+    "official_publication_page_accessible": true,
+    "latest_data_period_recorded": true,
+    "nsw_state_values_recorded": true,
+    "source_urls_recorded": true,
+    "github_actions_timeout_disclosed": true,
+    "no_local_measurement_claim": true
+  }
+}
