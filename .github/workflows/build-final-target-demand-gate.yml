@@ -1,0 +1,88 @@
+name: Build final target-demand gate and Claude handoff
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/build_final_target_demand_gate.py'
+      - '.github/workflows/build-final-target-demand-gate.yml'
+      - 'model_ready_inputs/reference/australian_energy_statistics_2025/AES_2025_download_audit.json'
+      - 'load_transfer/target_scaling/selected_site_network_capacity_trajectory.csv'
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: final-target-demand-gate
+  cancel-in-progress: true
+
+jobs:
+  target-demand-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - name: Install scientific dependencies
+        run: pip install numpy pandas pyarrow scikit-learn scipy
+      - name: Wait for and verify official Australian Energy Statistics audit
+        run: |
+          for attempt in $(seq 1 36); do
+            git pull --rebase || true
+            if [ -f model_ready_inputs/reference/australian_energy_statistics_2025/AES_2025_download_audit.json ]; then
+              python - <<'PY'
+          import json
+          from pathlib import Path
+          path = Path('model_ready_inputs/reference/australian_energy_statistics_2025/AES_2025_download_audit.json')
+          audit = json.loads(path.read_text())
+          if audit.get('status') != 'PASS':
+              raise SystemExit('AES audit exists but is not PASS')
+          print('Official Australian Energy Statistics audit is PASS')
+          PY
+              exit 0
+            fi
+            echo "AES audit not committed yet; waiting 20 seconds (${attempt}/36)"
+            sleep 20
+          done
+          echo 'Official Australian Energy Statistics audit was not available within 12 minutes'
+          exit 1
+      - name: Download validated Ausgrid source-archetype artifact
+        run: |
+          rm -rf load_transfer/source_artifact
+          mkdir -p load_transfer/source_artifact
+          gh run download 30492636843 \
+            --name ausgrid-source-load-archetype-preparation-v1 \
+            --dir load_transfer/source_artifact
+          test -f load_transfer/source_artifact/results/ausgrid_station_year_archetype_features.parquet
+      - name: Build clustering, pseudo-target validation and 600 annual profiles
+        run: python scripts/build_final_target_demand_gate.py
+      - name: Upload full final target-demand package
+        uses: actions/upload-artifact@v4
+        with:
+          name: regional-nsw-final-target-demand-gate-v1
+          path: |
+            load_transfer/final_target_demand_gate
+            READY_FOR_CLAUDE.json
+            CLAUDE_HANDOFF_READY.md
+          retention-days: 90
+          compression-level: 6
+          if-no-files-found: error
+      - name: Commit compact gate outputs and readiness marker
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add READY_FOR_CLAUDE.json CLAUDE_HANDOFF_READY.md
+          git add load_transfer/final_target_demand_gate/*.json
+          git add load_transfer/final_target_demand_gate/*.csv
+          git commit -m "Close final target-demand gate and mark Claude handoff ready"
+          git pull --rebase
+          git push
