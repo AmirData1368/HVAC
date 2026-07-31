@@ -1,4 +1,5 @@
 name: Build final target-demand gate and Claude handoff
+# The AES gate may be satisfied by the documented official energy.gov.au web-publication fallback.
 
 on:
   workflow_dispatch:
