@@ -11,10 +11,14 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: australian-energy-statistics-2025
+  cancel-in-progress: true
+
 jobs:
   energy-statistics:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - name: Record workflow attempt
@@ -31,10 +35,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install dependencies
-        run: |
-          pip install pandas openpyxl requests beautifulsoup4 playwright
-          playwright install --with-deps chromium
+          cache: pip
+      - name: Install bounded dependencies
+        run: pip install pandas openpyxl requests
       - name: Download and audit official Tables B F and L
         run: python scripts/download_australian_energy_statistics.py
       - name: Upload official energy-statistics package
@@ -43,6 +46,7 @@ jobs:
           name: australian-energy-statistics-2025-model-inputs
           path: model_ready_inputs/reference/australian_energy_statistics_2025
           retention-days: 90
+          if-no-files-found: error
       - name: Commit workbooks, audit and run metadata
         run: |
           cat > model_ready_inputs/reference/australian_energy_statistics_2025/latest_run.json <<EOF
