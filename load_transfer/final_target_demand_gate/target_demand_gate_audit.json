@@ -1,0 +1,164 @@
+{
+  "status": "READY_FOR_CLAUDE",
+  "github_run_id": "30610703165",
+  "source_ausgrid_run_id": 30492636843,
+  "source_ausgrid_artifact": "ausgrid-source-load-archetype-preparation-v1",
+  "year": 2025,
+  "interval_minutes": 15,
+  "scientific_terminology": {
+    "ausgrid_role": "measured source-domain temporal archetypes only; never measured target-site demand",
+    "target_scale": "Essential Energy official network-capacity-implied peak proxy with uncertainty",
+    "target_profiles": "probabilistic data-derived transferred demand scenarios, not measurements"
+  },
+  "gates": {
+    "aes_2025_official_inputs": true,
+    "ausgrid_source_station_count": 197,
+    "source_clustering": true,
+    "pseudo_target_validation": true,
+    "probabilistic_profiles": true,
+    "target_site_count": 6,
+    "scenarios_per_site": 100
+  },
+  "clustering": {
+    "candidate_cluster_counts": [
+      {
+        "k": 3,
+        "silhouette": 0.27114078417519966
+      },
+      {
+        "k": 4,
+        "silhouette": 0.2732360660170577
+      },
+      {
+        "k": 5,
+        "silhouette": 0.25961013974112335
+      },
+      {
+        "k": 6,
+        "silhouette": 0.2435631308502677
+      },
+      {
+        "k": 7,
+        "silhouette": 0.24345762356336986
+      },
+      {
+        "k": 8,
+        "silhouette": 0.2442671866605166
+      }
+    ],
+    "selected_k": 4,
+    "selected_silhouette": 0.2732360660170577,
+    "station_count": 197,
+    "explained_variance_first_8_pca": 0.9848343255047248
+  },
+  "pseudo_target": {
+    "station_count": 197,
+    "median_correlation": 0.9474642342201605,
+    "p10_correlation": 0.85862864184664,
+    "median_nrmse": 0.06297699509345966,
+    "p90_nrmse": 0.10379002370723786,
+    "median_mae": 0.052376657792865516,
+    "passed": true
+  },
+  "uncertainty_coverage": {
+    "site_checks": [
+      {
+        "site_name": "Bombala",
+        "scenario_count": 100,
+        "profile_interval_count": 3504000,
+        "expected_profile_interval_count": 3504000,
+        "proxy_peak_mw": 5.0,
+        "scenario_peak_p05_mw": 4.5342844816680685,
+        "scenario_peak_p95_mw": 5.755722981691281,
+        "proxy_covered_by_p05_p95": true,
+        "minimum_load_mw": 0.5341807007789612,
+        "median_annual_load_factor": 0.5632647814174683,
+        "p05_annual_load_factor": 0.48441374292498734,
+        "p95_annual_load_factor": 0.6661492073110712,
+        "profile_file": "load_transfer/final_target_demand_gate/profiles/bombala_2025_100_scenarios.parquet"
+      },
+      {
+        "site_name": "Hallidays Point 11kV",
+        "scenario_count": 100,
+        "profile_interval_count": 3504000,
+        "expected_profile_interval_count": 3504000,
+        "proxy_peak_mw": 8.3,
+        "scenario_peak_p05_mw": 7.3212400876950685,
+        "scenario_peak_p95_mw": 9.300132822824803,
+        "proxy_covered_by_p05_p95": true,
+        "minimum_load_mw": 1.098431944847107,
+        "median_annual_load_factor": 0.5779955790213167,
+        "p05_annual_load_factor": 0.4795472854589234,
+        "p95_annual_load_factor": 0.6395719756584688,
+        "profile_file": "load_transfer/final_target_demand_gate/profiles/hallidays_point_11kv_2025_100_scenarios.parquet"
+      },
+      {
+        "site_name": "Merrywinebone",
+        "scenario_count": 100,
+        "profile_interval_count": 3504000,
+        "expected_profile_interval_count": 3504000,
+        "proxy_peak_mw": 2.6,
+        "scenario_peak_p05_mw": 2.0589613994007765,
+        "scenario_peak_p95_mw": 3.3128326420876797,
+        "proxy_covered_by_p05_p95": true,
+        "minimum_load_mw": 0.3165326714515686,
+        "median_annual_load_factor": 0.5632719544973992,
+        "p05_annual_load_factor": 0.4903022956051127,
+        "p95_annual_load_factor": 0.6445382921922016,
+        "profile_file": "load_transfer/final_target_demand_gate/profiles/merrywinebone_2025_100_scenarios.parquet"
+      },
+      {
+        "site_name": "Narrandera",
+        "scenario_count": 100,
+        "profile_interval_count": 3504000,
+        "expected_profile_interval_count": 3504000,
+        "proxy_peak_mw": 10.3,
+        "scenario_peak_p05_mw": 8.953996494005239,
+        "scenario_peak_p95_mw": 11.769415385232374,
+        "proxy_covered_by_p05_p95": true,
+        "minimum_load_mw": 0.920814573764801,
+        "median_annual_load_factor": 0.5709690109686942,
+        "p05_annual_load_factor": 0.4689139579780179,
+        "p95_annual_load_factor": 0.6367909100663047,
+        "profile_file": "load_transfer/final_target_demand_gate/profiles/narrandera_2025_100_scenarios.parquet"
+      },
+      {
+        "site_name": "Suffolk Park",
+        "scenario_count": 100,
+        "profile_interval_count": 3504000,
+        "expected_profile_interval_count": 3504000,
+        "proxy_peak_mw": 13.1,
+        "scenario_peak_p05_mw": 10.06139934770517,
+        "scenario_peak_p95_mw": 17.235539671071823,
+        "proxy_covered_by_p05_p95": true,
+        "minimum_load_mw": 1.1766319274902344,
+        "median_annual_load_factor": 0.5555341853540734,
+        "p05_annual_load_factor": 0.4639077712810273,
+        "p95_annual_load_factor": 0.6241009951490878,
+        "profile_file": "load_transfer/final_target_demand_gate/profiles/suffolk_park_2025_100_scenarios.parquet"
+      },
+      {
+        "site_name": "West Jemalong",
+        "scenario_count": 100,
+        "profile_interval_count": 3504000,
+        "expected_profile_interval_count": 3504000,
+        "proxy_peak_mw": 2.1,
+        "scenario_peak_p05_mw": 1.8389035310280097,
+        "scenario_peak_p95_mw": 2.3536441315077963,
+        "proxy_covered_by_p05_p95": true,
+        "minimum_load_mw": 0.21922630071640015,
+        "median_annual_load_factor": 0.5548953564150017,
+        "p05_annual_load_factor": 0.4806052622385543,
+        "p95_annual_load_factor": 0.6378549139195887,
+        "profile_file": "load_transfer/final_target_demand_gate/profiles/west_jemalong_2025_100_scenarios.parquet"
+      }
+    ],
+    "six_sites": true,
+    "one_hundred_scenarios_per_site": true,
+    "all_interval_counts_exact": true,
+    "all_proxy_peaks_covered": true,
+    "no_negative_load": true,
+    "load_factor_plausible": true,
+    "passed": true
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "status": "READY_FOR_CLAUDE",
+  "ready_for_claude": true,
+  "required_start": "CLAUDE_CODE_MASTER_PROMPT.md Stage 0",
+  "governance": "Claude must stop at every stage gate for ChatGPT review.",
+  "full_profile_artifact_directory": "load_transfer/final_target_demand_gate/profiles",
+  "compact_gate_audit": "load_transfer/final_target_demand_gate/target_demand_gate_audit.json"
+}
